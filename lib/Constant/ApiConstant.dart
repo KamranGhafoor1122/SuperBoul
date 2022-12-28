@@ -1,0 +1,25 @@
+class ApiConst {
+  //static const String BASE_URL = 'https://superlotto.mabhattiltd.com/public/api/';
+  static const String BASE_URL = 'https://brasshaiti.net/api/';
+  static const String login = 'login';
+  static const String signup = 'sign-up';
+  static const String verify_code = 'verify-code';
+  static const String update_progfile = 'user/profile/update';
+  static const String get_profile = 'user/profile';
+  static const String change_password = 'user/change-password';
+  static const String set_pin = 'user/set-password';
+  static const String sendOTP = 'send-otp';
+  static const String getLottery = 'lottery';
+  static const String drawEntry = 'draw-entry';
+  static const String addTicket = 'ticket/add';
+  static const String getTicket = 'ticket';
+  static const String gettransactions = 'transactions';
+  static const String getTicketsList = 'tickets';
+  static const String getWinnings = 'get-winnings';
+  static const String getEntriesList = 'entries?ticket_id=';
+  static const String addcredit = 'credit';
+  static const String createPayment = 'createPayment';
+  static const String checkPaymentOrderStatus = 'checkOrderIdStatus';
+  static const String getWalletPoints = 'getWalletPoints';
+  static const String getUser = 'user/profile';
+}
