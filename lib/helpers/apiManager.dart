@@ -82,7 +82,7 @@ class ApiManager {
       log(url123);
       try {
         final responseOfAPI =
-        await http.post(Uri.parse(url123), body: jsonEncode(apiBody), headers: apiHeader).timeout(const Duration(seconds: 15), onTimeout: () {
+        await http.post(Uri.parse(url123), body: jsonEncode(apiBody), headers: apiHeader).timeout(const Duration(seconds: 45), onTimeout: () {
           // Time has run out, do what you wanted to do.
           return HelperFunctions.showAlert(
               context: context,

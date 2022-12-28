@@ -436,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             body: lottteryModel == null || lottteryModel!.data == null
                 ? Center(
-                    child: Text("No data found..."),
+                    child: Text("No lottery found..."),
                   )
                 : SingleChildScrollView(
                     child: Padding(

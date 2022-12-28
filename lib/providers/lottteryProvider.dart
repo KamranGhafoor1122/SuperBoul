@@ -13,7 +13,6 @@ import 'package:superlotto/models/TicketModel.dart';
 import 'package:superlotto/models/WalletPointsModel.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 import 'package:uuid/uuid.dart';
-
 import '../Constant/ApiConstant.dart';
 import '../Screens/Widgets/ticketInfoWidget.dart';
 import '../helpers/apiManager.dart';
