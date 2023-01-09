@@ -12,6 +12,7 @@ import 'package:superlotto/Constant/ApiConstant.dart';
 import 'package:superlotto/Screens/InviteScreen.dart';
 import 'package:superlotto/Screens/LoginScreen.dart';
 import 'package:superlotto/Screens/PaymentWebView.dart';
+import 'package:superlotto/Screens/Widgets/ShowRulesAlert.dart';
 import 'package:superlotto/Screens/Widgets/WithdrawCashAlert.dart';
 import 'package:superlotto/Screens/Widgets/custom_gradient.dart';
 import 'package:superlotto/Screens/Widgets/custom_toast.dart';
@@ -67,6 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
+       String read = await HelperFunctions.getFromPreference("about_the_app_read");
+       if(read != "yes"){
+         showDialog(context: context,
+             barrierDismissible: false
+             ,builder: (ctx)=>ShowRulesAlert());
+       }
+    });
     getAlbum();
     HelperFunctions.getFromPreference("fname").then((value) {
       fname = value;

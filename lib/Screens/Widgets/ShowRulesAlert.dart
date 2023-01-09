@@ -2,14 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
-class WithdrawCashAlert extends StatelessWidget {
+import 'package:superlotto/helpers/helperFunctions.dart';
+class ShowRulesAlert extends StatelessWidget {
 
-  WithdrawCashAlert({Key? key}) : super(key: key);
+  ShowRulesAlert({Key? key}) : super(key: key);
 
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _accountNumber = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,75 +30,69 @@ class WithdrawCashAlert extends StatelessWidget {
             SizedBox(height: 15,),
 
             Text(
-              "Withdraw Amount",
+              "About the App",
               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700),
             ),
             SizedBox(height: 15,),
 
-            Text(
-              "Please enter details for withdraw...",
-              style: TextStyle(color: Colors.black26, fontSize: 14, fontWeight: FontWeight.w600),
-            ),
 
 
 
-            SizedBox(height: 15,),
-
-            CustomTextfeild(20, _amountController, "Amount", "Enter Amount"),
-
-
-
-            SizedBox(height: 15,),
-
-            CustomTextfeild(30, _accountNumber, "Account Number", "Enter Account Number"),
-
-
-
-            SizedBox(height: 15,),
-
-            CustomTextfeild(100, _descriptionController, "Description", "Enter Description"),
-
-            SizedBox(height: 25,),
 
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.grey, Colors.grey],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(15))
-                        // image: DecorationImage(
-                        //   // scale: 1,
-                        //   fit: BoxFit.cover,
-                        //   image: AssetImage(
-                        //     'assets/Images/Rectangle 7.png',
-                        //   ),
-                        // ),
-                      ),
-                      child: Center(child: CustomeText(FontWeight.w500, 20.sp, "Cancel", Colors.black)),
-                    ),
-                  ),
+                Icon(
+                  Icons.send,size: 25,color: AppColor.redcolor,
                 ),
                 SizedBox(
-                  width: 15,
+                  width: 10,
                 ),
                 Expanded(
-                  child: CustomButton(
-                      'Pay', onpressed: () {
-                    Navigator.pop(context);
-                  }),
+                  child: CustomeText(FontWeight.w500, 14, "The app does not contain any illegal operation , like stealing money, gambling or"
+                      "fraud etc.", Colors.black),
                 ),
               ],
             ),
+            SizedBox(height: 15,),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.send,size: 25,color: AppColor.redcolor,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(child: CustomeText(FontWeight.w500, 14, "All the features of app are fully secured and privacy of the users data is completely ensured", Colors.black)),
+              ],
+            ),
+            SizedBox(height: 15,),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.send,size: 25,color: AppColor.redcolor,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(child: CustomeText(FontWeight.w500, 14, "Any unusual activity is not allowed", Colors.black)),
+              ],
+            ),
+
+
+
+            SizedBox(height: 15,),
+
+
+            CustomButton(
+                'Okay, Got It!', onpressed: () async{
+                 await HelperFunctions.saveInPreference("about_the_app_read", "yes");
+              Navigator.pop(context);
+            }),
 
             SizedBox(height: 15,),
           ],

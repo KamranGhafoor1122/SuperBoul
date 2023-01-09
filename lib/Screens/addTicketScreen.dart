@@ -84,8 +84,6 @@ class AddTicketScreen extends StatelessWidget {
                       lotteryProvider.lotteryId = ticketId;
                       lotteryProvider.ticketName = _ticketNamecontroller.text.toString();
                       await lotteryProvider.callcreateTicketAPI(context);
-
-
                     }
                   }),
                 ],
