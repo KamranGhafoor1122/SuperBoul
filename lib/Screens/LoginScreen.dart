@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                             children: [
                               SizedBox(height: 0.h),
 
-                              SizedBox(height: 130.h),
+                              SizedBox(height: 100.h),
                               CustomeText(FontWeight.w600, 24.sp, 'Welcome SuperBoul,', AppColor.redcolor),
                               CustomeText(FontWeight.w400, 14.sp, 'Thank you for remember...', const Color(0xff666666)),
                               SizedBox(height: 30.h),
@@ -126,7 +126,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                               // CustomTextfeild(10,_phoneController,'Phone No',''),
-                              SizedBox(height: 50.h),
+                              SizedBox(height: 30.h),
                               OTPTextField(
                                 length: 4,
                                 width: MediaQuery.of(context).size.width,
@@ -164,8 +164,7 @@ class LoginScreen extends StatelessWidget {
                                 ],
                               ),
 
-                              SizedBox(height: 50.h),
-                              SizedBox(height: 40.h),
+                              SizedBox(height: 30.h),
                               CustomButton('Login', onpressed: () {
                                 if (_pin.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -179,12 +178,12 @@ class LoginScreen extends StatelessWidget {
 
                               // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(),));
 
-                              SizedBox(height: 10.h),
+                              SizedBox(height: 25.h),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CustomeText(FontWeight.w400, 12.sp, 'Don’t have account! ', const Color(0xff666666)),
-                                  InkWell(
+                                  /*InkWell(
                                       onTap: () {
                                         Navigator.push(
                                             context,
@@ -192,10 +191,18 @@ class LoginScreen extends StatelessWidget {
                                               builder: (context) => SingUpScreen(),
                                             ));
                                       },
-                                      child: CustomeText(FontWeight.w600, 16.sp, 'Sign Up', AppColor.redcolor)),
+                                      child: CustomeText(FontWeight.w600, 16.sp, 'Sign Up', AppColor.redcolor)),*/
                                 ],
                               ),
-                              SizedBox(height: 15.h),
+                              SizedBox(height: 7.h),
+
+                              CustomButton('Signup', onpressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SingUpScreen(),
+                                    ));
+                              }),
                             ],
                           ),
                         ),

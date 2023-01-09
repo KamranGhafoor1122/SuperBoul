@@ -447,430 +447,464 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Center(
                     child: Text("No lottery found..."),
                   )
-                : SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Welcome back ",
-                                style: TextStyle(color: Colors.black, fontSize: size.height * 0.03, fontFamily: 'Graphik'),
+                : RefreshIndicator(
+              color: AppColor.redcolor,
+              onRefresh: () async{
+
+
+                setState(() {
+                  lottteryModel = null;
+                  ticketModel = null;
+                });
+                getAlbum();
+                HelperFunctions.getFromPreference("fname").then((value) {
+                  fname = value;
+                });
+                HelperFunctions.getFromPreference("lname").then((value) {
+                  lname = value;
+                });
+                setState(() {
+                });
+
+                },
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: size.height * 0.02,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Welcome back ",
+                                  style: TextStyle(color: Colors.black, fontSize: size.height * 0.03, fontFamily: 'Graphik'),
+                                ),
+                                MyCustomGradient(
+                                  child: Text(
+                                    fname == null ? "John  Doe" : "$fname $lname",
+                                    style: TextStyle(color: Colors.white, fontSize: size.height * 0.03, fontFamily: 'Graphik'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: size.height * 0.02,
+                            ),
+                            Center(
+                              child: Text(
+                                DateFormat('dd-MM-yyyy').format(DateTime.parse(lottteryModel!.data!.expireOn.toString())),
+                                style: TextStyle(color: Colors.black, fontSize: size.height * 0.02, fontFamily: 'Graphik'),
                               ),
-                              MyCustomGradient(
-                                child: Text(
-                                  fname == null ? "John  Doe" : "$fname $lname",
-                                  style: TextStyle(color: Colors.white, fontSize: size.height * 0.03, fontFamily: 'Graphik'),
+                            ),
+
+                            SizedBox(
+                              height: size.height * 0.02,
+                            ),
+                            if(DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds>1)...[
+                              Center(
+                                child: SlideCountdownSeparated(
+                                  // separatorType: SeparatorType.title,
+                                  // durationTitle: DurationTitle.id(),
+
+                                  duration: Duration(seconds: DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds),
+                                  // duration: const Duration(days: 2),
                                 ),
                               ),
+                            ]
+                            else...[
+                                Center(
+                                  child: SlideCountdownSeparated(
+                                    duration: Duration(seconds: DateTime.parse(lottteryModel!.data!.expireOn.toString()).difference(DateTime.now()).inSeconds),
+                                    // duration: const Duration(days: 2),
+                                  ),
+                                ),
                             ],
-                          ),
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          Center(
-                            child: Text(
-                              DateFormat('dd-MM-yyyy').format(DateTime.parse(lottteryModel!.data!.expireOn.toString())),
-                              style: TextStyle(color: Colors.black, fontSize: size.height * 0.02, fontFamily: 'Graphik'),
-                            ),
-                          ),
 
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          if(DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds>1)
-                          Center(
-                            child: SlideCountdownSeparated(
-                              // separatorType: SeparatorType.title,
-                              // durationTitle: DurationTitle.id(),
 
-                              duration: Duration(seconds: DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds),
-                              // duration: const Duration(days: 2),
+                            SizedBox(
+                              height: size.height * 0.02,
                             ),
-                          ),
-                          if(DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds<1)
-                          Center(
-                            child: SlideCountdownSeparated(
-                              duration: Duration(seconds: DateTime.parse(lottteryModel!.data!.expireOn.toString()).difference(DateTime.now()).inSeconds),
-                              // duration: const Duration(days: 2),
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          Center(
-                            child: TapToExpand(
-                              color: Colors.white60,
-                              content: ticketModel == null
-                                  ? Center(
-                                      child: Text("No ticket  details found"),
-                                    )
-                                  : Column(
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height: size.height * 0.01,
-                                        ),
-                                        ticketModel == null
-                                            ? Container()
-                                            : TicketInfoWidget(
-                                                title: "TICKET NAME",
-                                                info: ticketModel!.data!.name,
-                                              ),
-                                        SizedBox(
-                                          height: size.height * 0.007,
-                                        ),
-                                        ticketModel == null
-                                            ? Container()
-                                            : TicketInfoWidget(
-                                                title: "TICKET NO",
-                                                info: ticketModel!.data!.ticketNo,
-                                              ),
-                                        SizedBox(
-                                          height: size.height * 0.007,
-                                        ),
-                                        ticketModel == null
-                                            ? Container()
-                                            : TicketInfoWidget(
-                                                title: "TOTAL ENTRIES",
-                                                info: ticketModel!.data!.entries,
-                                              ),
-                                        SizedBox(
-                                          height: size.height * 0.007,
-                                        ),
-                                        ticketModel == null
-                                            ? Container()
-                                            : TicketInfoWidget(
-                                                title: "REMAINING ENTRIES",
-                                                info: ticketModel!.data!.remainingEntries,
-                                              ),
-                                        SizedBox(
-                                          height: size.height * 0.007,
-                                        ),
-                                        ticketModel == null
-                                            ? Container()
-                                            : TicketInfoWidget(
-                                                title: "AMOUNT",
-                                                info: ticketModel!.data!.amount,
-                                              ),
-                                        TextButton(
-                                          style: TextButton.styleFrom(primary: Colors.grey, elevation: 2, backgroundColor: AppColor.redcolor),
-                                          child: Text(
-                                            "View Entries",
-                                            style: TextStyle(fontSize: 12, color: Colors.white),
+                            Center(
+                              child: TapToExpand(
+                                color: Colors.white60,
+                                content: ticketModel == null
+                                    ? Center(
+                                        child: Text("No ticket  details found"),
+                                      )
+                                    : Column(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: size.height * 0.01,
                                           ),
-                                          onPressed: () {
-                                            Provider.of<HistoryProvider>(context, listen: false).ticketId = ticketModel!.data!.id.toString();
-                                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntriesHistoryScreen()));
-                                          },
-                                        )
-                                      ],
-                                    ),
-                              title: Text(
-                                'TICKET DETAILS',
-                                style: TextStyle(color: Colors.black, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
-                              ),
-                              onTapPadding: 0,
-                              closedHeight: 70,
-                              scrollable: true,
-                              borderRadius: 10,
-                              openedHeight: ticketModel == null ? 120 : 240,
-                            ),
-                          ),
-                          Center(
-                            child: TapToExpand(
-                              content: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey), color: Colors.grey, borderRadius: BorderRadius.circular(5)),
-                                    padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.star,
-                                          color: AppColor.redcolor,
-                                        ),
-                                        Text(
-                                          lottteryModel!.data!.name ?? "Lottery name",
-                                          style: TextStyle(color: Colors.black, fontSize: size.height * 0.015),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 0.007,
-                                  ),
-                                  lottteryModel == null
-                                      ? Container()
-                                      : TicketInfoWidget(
-                                          title: "LIVE ON",
-                                          info: ourFormat.format(lottteryModel!.data!.liveOn as DateTime),
-                                        ),
-                                  SizedBox(
-                                    height: size.height * 0.007,
-                                  ),
-                                  lottteryModel == null
-                                      ? Container()
-                                      : TicketInfoWidget(
-                                          title: "EXPIRES ON",
-                                          info: ourFormat.format(lottteryModel!.data!.expireOn as DateTime),
-                                        ),
-                                  // SizedBox(
-                                  //   height: size.height * 0.007,
-                                  // ),
-                                  // lottteryModel == null
-                                  //     ? Container()
-                                  //     : TicketInfoWidget(
-                                  //   title: "1st Prize",
-                                  //   info: lottteryModel!.data!.first_prize.toString(),
-                                  // ),
-                                  SizedBox(
-                                    height: size.height * 0.007,
-                                  ),
-                                  lottteryModel == null
-                                      ? Container()
-                                      : TicketInfoWidget(
-                                    title: "1st Prize",
-                                    info: lottteryModel!.data!.first_prize.toString(),
-                                  ),
-
-                                  // SizedBox(
-                                  //   height: size.height * 0.007,
-                                  // ),
-                                  // lottteryModel == null
-                                  //     ? Container()
-                                  //     : TicketInfoWidget(
-                                  //   title: "2nd Prize",
-                                  //   info: lottteryModel!.data!.second_prize.toString(),
-                                  // ),
-                                  SizedBox(
-                                    height:  size.height * 0.007,
-                                  ),
-                                  lottteryModel == null
-                                      ? Container()
-                                      : TicketInfoWidget(
-                                    title:  "2nd Prize",
-                                    info: lottteryModel!.data!.second_prize.toString(),
-                                  ),
-                                  SizedBox(
-                                    height:  size.height * 0.007,
-                                  ),
-                                  lottteryModel == null
-                                      ? Container()
-                                      : TicketInfoWidget(
-                                    title:  "3rd Prize",
-                                    info: lottteryModel!.data!.third_prize.toString(),
-                                  ),
-                                  // SizedBox(
-                                  //   height: size.height * 0.007,
-                                  // ),
-                                  // lottteryModel == null
-                                  //     ? Container()
-                                  //     : TicketInfoWidget(
-                                  //   title:  "3rd Prize",
-                                  //   info: lottteryModel!.data!.third_prize.toString(),
-                                  // ),
-                                  // SizedBox(
-                                  //   height: size.height * 0.007,
-                                  // ),
-                                  // lottteryModel == null
-                                  //     ? Container()
-                                  //     : TicketInfoWidget(
-                                  //   title: "WINNING AMOUNT",
-                                  //   info: lottteryModel!.data!.winning_amount.toString(),
-                                  // ),
-                                  SizedBox(
-                                    height: size.height * 0.01,
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 0.01,
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                                      child: Text(
-                                        lottteryModel!.data!.description ?? "No description",
-                                        textAlign: TextAlign.center,
-                                      )),
-                                ],
-                              ),
-                              title: Text(
-                                'LOTTERY DETAILS',
-                                style: TextStyle(color: Colors.white, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
-                              ),
-                              onTapPadding: 0,
-                              closedHeight: 70,
-                              scrollable: true,
-                              borderRadius: 10,
-                              openedHeight: 250,
-                            ),
-                          ),
-
-                          // const SizedBox(height: 20.0),
-
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     RowWidget(
-                          //       msg: "STR",
-                          //       clr: Color(0xffFD8F08),
-                          //     ),
-                          //     RowWidget(msg: "PALE", clr: Color(0xffFD8F08)),
-                          //     RowWidget(
-                          //       msg: "TRIPLE",
-                          //       clr: AppColor.redcolor,
-                          //     ),
-                          //     RowWidget(
-                          //       msg: "CASH3",
-                          //       clr: Color(0xffFD8F08),
-                          //     ),
-                          //     RowWidget(
-                          //       msg: "PLAY4",
-                          //       clr: Color(0xffFD8F08),
-                          //     ),
-                          //     RowWidget(
-                          //       msg: "PICKS",
-                          //       clr: Color(0xffFD8F08),
-                          //     ),
-                          //   ],
-                          // ),
-                          // SizedBox(
-                          //   height: size.height * 0.02,
-                          // ),
-                          // Center(
-                          //   child: Text(
-                          //     "TAP TO SELECT",
-                          //     textAlign: TextAlign.start,
-                          //     style: TextStyle(color: Colors.black, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
-                          //   ),
-                          // ),
-                          SizedBox(
-                            height: size.height * 0.04,
-                          ),
-                          // SizedBox(
-                          //   height: size.height * 0.1,
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: [
-                          //       Expanded(
-                          //         child: ListView.builder(
-                          //           shrinkWrap: true,
-                          //           padding: EdgeInsets.only(left: 50),
-                          //           scrollDirection: Axis.horizontal,
-                          //           itemCount: lottteryModel != null || lottteryModel!.data != null ? lottteryModel!.data!.numbers!.length : 0,
-                          //           itemBuilder: (context, index) => GestureDetector(
-                          //               onTap: () {
-                          //                 _amountController.clear();
-                          //                 _amountController.text = lottteryModel!.data!.numbers![index].toString();
-                          //               },
-                          //               child: Padding(
-                          //                 padding: const EdgeInsets.all(8.0),
-                          //                 child: CircleAvatar(
-                          //                   backgroundColor: AppColor.redcolor,
-                          //                   radius: size.width * 0.1,
-                          //                   child: Text(
-                          //                     lottteryModel!.data!.numbers![index].toString(),
-                          //                     style: TextStyle(color: Colors.white, fontSize: size.height * 0.03),
-                          //                   ),
-                          //                 ),
-                          //               )
-                          //
-                          //               //  Container(
-                          //               //     margin: EdgeInsets.all(size.width * .02),
-                          //               //     decoration: BoxDecoration(
-                          //               //       borderRadius: BorderRadius.circular(35),
-                          //               //       color: AppColor.redcolor,
-                          //               //     ),
-                          //               //     padding: EdgeInsets.all(20),
-                          //               //     child: Text(
-                          //               //        lottteryModel!.data!.numbers![index].toString(),
-                          //               //       style: TextStyle(color: Colors.white, fontSize: size.height * 0.03),
-                          //               //     )),
-                          //               ),
-                          //         ),
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
-                          Container(
-                            height: size.height * 0.05,
-                            width: size.width * 0.9,
-                            alignment: Alignment.center,
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount:numbers.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    elevation: 1,
-                                    color:  Colors.orangeAccent,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)
-                                    ),
-                                    child: InkWell(
-                                      onTap: () => removeNum(numbers[index], context),
-                                      child: Container(
-                                        width:  size.height * 0.05,
-                                        // height: 20,
-                                        child: Center(
-                                          child:Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                          ticketModel == null
+                                              ? Container()
+                                              : TicketInfoWidget(
+                                                  title: "TICKET NAME",
+                                                  info: ticketModel!.data!.name,
+                                                ),
+                                          SizedBox(
+                                            height: size.height * 0.007,
+                                          ),
+                                          ticketModel == null
+                                              ? Container()
+                                              : TicketInfoWidget(
+                                                  title: "TICKET NO",
+                                                  info: ticketModel!.data!.ticketNo,
+                                                ),
+                                          SizedBox(
+                                            height: size.height * 0.007,
+                                          ),
+                                          ticketModel == null
+                                              ? Container()
+                                              : TicketInfoWidget(
+                                                  title: "TOTAL ENTRIES",
+                                                  info: ticketModel!.data!.entries,
+                                                ),
+                                          SizedBox(
+                                            height: size.height * 0.007,
+                                          ),
+                                          ticketModel == null
+                                              ? Container()
+                                              : TicketInfoWidget(
+                                                  title: "REMAINING ENTRIES",
+                                                  info: ticketModel!.data!.remainingEntries,
+                                                ),
+                                          SizedBox(
+                                            height: size.height * 0.007,
+                                          ),
+                                          ticketModel == null
+                                              ? Container()
+                                              : TicketInfoWidget(
+                                                  title: "AMOUNT",
+                                                  info: ticketModel!.data!.amount,
+                                                ),
+                                          TextButton(
+                                            style: TextButton.styleFrom(primary: Colors.grey, elevation: 2, backgroundColor: AppColor.redcolor),
                                             child: Text(
-                                              '${numbers[index]}',
-                                              style: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w600,),
-                                            )
+                                              "View Entries",
+                                              style: TextStyle(fontSize: 12, color: Colors.white),
+                                            ),
+                                            onPressed: () {
+                                              Provider.of<HistoryProvider>(context, listen: false).ticketId = ticketModel!.data!.id.toString();
+                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EntriesHistoryScreen()));
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                title: Text(
+                                  'TICKET DETAILS',
+                                  style: TextStyle(color: Colors.black, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
+                                ),
+                                onTapPadding: 0,
+                                closedHeight: 70,
+                                scrollable: true,
+                                borderRadius: 10,
+                                openedHeight: ticketModel == null ? 120 : 240,
+                              ),
+                            ),
+                            Center(
+                              child: TapToExpand(
+                                content: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.grey), color: Colors.grey, borderRadius: BorderRadius.circular(5)),
+                                      padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.star,
+                                            color: AppColor.redcolor,
+                                          ),
+                                          Text(
+                                            lottteryModel!.data!.name ?? "Lottery name",
+                                            style: TextStyle(color: Colors.black, fontSize: size.height * 0.015),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.007,
+                                    ),
+                                    lottteryModel == null
+                                        ? Container()
+                                        : TicketInfoWidget(
+                                            title: "LIVE ON",
+                                            info: ourFormat.format(lottteryModel!.data!.liveOn as DateTime),
+                                          ),
+                                    SizedBox(
+                                      height: size.height * 0.007,
+                                    ),
+                                    lottteryModel == null
+                                        ? Container()
+                                        : TicketInfoWidget(
+                                            title: "EXPIRES ON",
+                                            info: ourFormat.format(lottteryModel!.data!.expireOn as DateTime),
+                                          ),
+                                    // SizedBox(
+                                    //   height: size.height * 0.007,
+                                    // ),
+                                    // lottteryModel == null
+                                    //     ? Container()
+                                    //     : TicketInfoWidget(
+                                    //   title: "1st Prize",
+                                    //   info: lottteryModel!.data!.first_prize.toString(),
+                                    // ),
+                                    SizedBox(
+                                      height: size.height * 0.007,
+                                    ),
+                                    lottteryModel == null
+                                        ? Container()
+                                        : TicketInfoWidget(
+                                      title: "1st Prize",
+                                      info: lottteryModel!.data!.first_prize.toString(),
+                                    ),
+
+                                    // SizedBox(
+                                    //   height: size.height * 0.007,
+                                    // ),
+                                    // lottteryModel == null
+                                    //     ? Container()
+                                    //     : TicketInfoWidget(
+                                    //   title: "2nd Prize",
+                                    //   info: lottteryModel!.data!.second_prize.toString(),
+                                    // ),
+                                    SizedBox(
+                                      height:  size.height * 0.007,
+                                    ),
+                                    lottteryModel == null
+                                        ? Container()
+                                        : TicketInfoWidget(
+                                      title:  "2nd Prize",
+                                      info: lottteryModel!.data!.second_prize.toString(),
+                                    ),
+                                    SizedBox(
+                                      height:  size.height * 0.007,
+                                    ),
+                                    lottteryModel == null
+                                        ? Container()
+                                        : TicketInfoWidget(
+                                      title:  "3rd Prize",
+                                      info: lottteryModel!.data!.third_prize.toString(),
+                                    ),
+                                    // SizedBox(
+                                    //   height: size.height * 0.007,
+                                    // ),
+                                    // lottteryModel == null
+                                    //     ? Container()
+                                    //     : TicketInfoWidget(
+                                    //   title:  "3rd Prize",
+                                    //   info: lottteryModel!.data!.third_prize.toString(),
+                                    // ),
+                                    // SizedBox(
+                                    //   height: size.height * 0.007,
+                                    // ),
+                                    // lottteryModel == null
+                                    //     ? Container()
+                                    //     : TicketInfoWidget(
+                                    //   title: "WINNING AMOUNT",
+                                    //   info: lottteryModel!.data!.winning_amount.toString(),
+                                    // ),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 0.01,
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                                        child: Text(
+                                          lottteryModel!.data!.description ?? "No description",
+                                          textAlign: TextAlign.center,
+                                        )),
+                                  ],
+                                ),
+                                title: Text(
+                                  'LOTTERY DETAILS',
+                                  style: TextStyle(color: Colors.white, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
+                                ),
+                                onTapPadding: 0,
+                                closedHeight: 70,
+                                scrollable: true,
+                                borderRadius: 10,
+                                openedHeight: 250,
+                              ),
+                            ),
+
+                            // const SizedBox(height: 20.0),
+
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   children: [
+                            //     RowWidget(
+                            //       msg: "STR",
+                            //       clr: Color(0xffFD8F08),
+                            //     ),
+                            //     RowWidget(msg: "PALE", clr: Color(0xffFD8F08)),
+                            //     RowWidget(
+                            //       msg: "TRIPLE",
+                            //       clr: AppColor.redcolor,
+                            //     ),
+                            //     RowWidget(
+                            //       msg: "CASH3",
+                            //       clr: Color(0xffFD8F08),
+                            //     ),
+                            //     RowWidget(
+                            //       msg: "PLAY4",
+                            //       clr: Color(0xffFD8F08),
+                            //     ),
+                            //     RowWidget(
+                            //       msg: "PICKS",
+                            //       clr: Color(0xffFD8F08),
+                            //     ),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: size.height * 0.02,
+                            // ),
+                            // Center(
+                            //   child: Text(
+                            //     "TAP TO SELECT",
+                            //     textAlign: TextAlign.start,
+                            //     style: TextStyle(color: Colors.black, fontSize: size.height * 0.018, fontWeight: FontWeight.bold),
+                            //   ),
+                            // ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+                            // SizedBox(
+                            //   height: size.height * 0.1,
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.center,
+                            //     children: [
+                            //       Expanded(
+                            //         child: ListView.builder(
+                            //           shrinkWrap: true,
+                            //           padding: EdgeInsets.only(left: 50),
+                            //           scrollDirection: Axis.horizontal,
+                            //           itemCount: lottteryModel != null || lottteryModel!.data != null ? lottteryModel!.data!.numbers!.length : 0,
+                            //           itemBuilder: (context, index) => GestureDetector(
+                            //               onTap: () {
+                            //                 _amountController.clear();
+                            //                 _amountController.text = lottteryModel!.data!.numbers![index].toString();
+                            //               },
+                            //               child: Padding(
+                            //                 padding: const EdgeInsets.all(8.0),
+                            //                 child: CircleAvatar(
+                            //                   backgroundColor: AppColor.redcolor,
+                            //                   radius: size.width * 0.1,
+                            //                   child: Text(
+                            //                     lottteryModel!.data!.numbers![index].toString(),
+                            //                     style: TextStyle(color: Colors.white, fontSize: size.height * 0.03),
+                            //                   ),
+                            //                 ),
+                            //               )
+                            //
+                            //               //  Container(
+                            //               //     margin: EdgeInsets.all(size.width * .02),
+                            //               //     decoration: BoxDecoration(
+                            //               //       borderRadius: BorderRadius.circular(35),
+                            //               //       color: AppColor.redcolor,
+                            //               //     ),
+                            //               //     padding: EdgeInsets.all(20),
+                            //               //     child: Text(
+                            //               //        lottteryModel!.data!.numbers![index].toString(),
+                            //               //       style: TextStyle(color: Colors.white, fontSize: size.height * 0.03),
+                            //               //     )),
+                            //               ),
+                            //         ),
+                            //       )
+                            //     ],
+                            //   ),
+                            // ),
+                            Container(
+                              height: size.height * 0.05,
+                              width: size.width * 0.9,
+                              alignment: Alignment.center,
+                              child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount:numbers.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return Card(
+                                      elevation: 1,
+                                      color:  Colors.orangeAccent,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8)
+                                      ),
+                                      child: InkWell(
+                                        onTap: () => removeNum(numbers[index], context),
+                                        child: Container(
+                                          width:  size.height * 0.05,
+                                          // height: 20,
+                                          child: Center(
+                                            child:Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                '${numbers[index]}',
+                                                style: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w600,),
+                                              )
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                })
-                          ),
-                          SizedBox(
-                            height: size.height * 0.04,
-                          ),
-                          SizedBox(
-                              height: size.height * 0.6,
-                              child: _numberChoices(winningNumLimit,context)),
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          // GestureDetector(onTap: () {}, child: AbsorbPointer(child: CustomTextfeild(15, _amountController, 'Number', ''))),
-                          SizedBox(
-                            height: size.height * 0.02,
-                          ),
-                          Provider.of<LotteryProvider>(context).isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColor.redcolor,
-                                  ),
-                                )
-                              : CustomButton('Confirm', onpressed: () {
-                                  if (numbers.length<6) {
-                                    HelperFunctions.showSnackBar(context: context, alert: "Please select six numbers");
-                                  } else {
-                                    Provider.of<LotteryProvider>(context, listen: false).lotteryId = lottteryModel!.data!.id.toString();
-                                    Provider.of<LotteryProvider>(context, listen: false).lotteryNumbers = numbers.value;
-                                    Provider.of<LotteryProvider>(context, listen: false).calldrawEntryAPI(context).then((value) {
-                                      // _amountController.clear();
-                                      numbers.value=[];
-                                      getAlbum();
-                                    });
-                                  }
-                                }),
-                          SizedBox(
-                            height: size.height * 0.03,
-                          ),
-                        ],
+                                    );
+                                  })
+                            ),
+                            SizedBox(
+                              height: size.height * 0.04,
+                            ),
+
+                            if(DateTime.parse(lottteryModel!.data!.liveOn.toString()).difference(DateTime.now()).inSeconds>1)...[
+                              Container(),
+                            ]
+                            else...[
+                              SizedBox(
+                                  height: size.height * 0.6,
+                                  child: _numberChoices(winningNumLimit,context)),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              // GestureDetector(onTap: () {}, child: AbsorbPointer(child: CustomTextfeild(15, _amountController, 'Number', ''))),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              Provider.of<LotteryProvider>(context).isLoading
+                                  ? Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor.redcolor,
+                                ),
+                              )
+                                  : CustomButton('Confirm', onpressed: () {
+                                if (numbers.length<6) {
+                                  HelperFunctions.showSnackBar(context: context, alert: "Please select six numbers");
+                                } else {
+                                  Provider.of<LotteryProvider>(context, listen: false).lotteryId = lottteryModel!.data!.id.toString();
+                                  Provider.of<LotteryProvider>(context, listen: false).lotteryNumbers = numbers.value;
+                                  Provider.of<LotteryProvider>(context, listen: false).calldrawEntryAPI(context).then((value) {
+                                    // _amountController.clear();
+                                    numbers.value=[];
+                                    getAlbum();
+                                  });
+                                }
+                              }),
+                              SizedBox(
+                                height: size.height * 0.03,
+                              ),
+                            ],
+
+
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                ),
 
             floatingActionButton: FloatingActionButton(
               onPressed: () {
