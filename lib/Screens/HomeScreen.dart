@@ -885,13 +885,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 if (numbers.length<6) {
                                   HelperFunctions.showSnackBar(context: context, alert: "Please select six numbers");
                                 } else {
-                                  Provider.of<LotteryProvider>(context, listen: false).lotteryId = lottteryModel!.data!.id.toString();
-                                  Provider.of<LotteryProvider>(context, listen: false).lotteryNumbers = numbers.value;
-                                  Provider.of<LotteryProvider>(context, listen: false).calldrawEntryAPI(context).then((value) {
-                                    // _amountController.clear();
-                                    numbers.value=[];
-                                    getAlbum();
-                                  });
+
+
+                                  if(DateTime.parse(lottteryModel!.data!.expireOn.toString()).difference(DateTime.now()).inSeconds>0){
+                                    Provider.of<LotteryProvider>(context, listen: false).lotteryId = lottteryModel!.data!.id.toString();
+                                    Provider.of<LotteryProvider>(context, listen: false).lotteryNumbers = numbers.value;
+                                    Provider.of<LotteryProvider>(context, listen: false).calldrawEntryAPI(context).then((value) {
+                                      // _amountController.clear();
+                                      numbers.value=[];
+                                      getAlbum();
+                                    });
+                                  }
+                                  else{
+                                    HelperFunctions.showSnackBar(context: context, alert: "This lottery has been expired");
+                                  }
+
                                 }
                               }),
                               SizedBox(
@@ -948,7 +956,6 @@ class _HomeScreenState extends State<HomeScreen> {
         } else {
           print("*****2");
           if (numbers.length == 5) {
-            print("*****3");
             if(pickedNumber<27) {
               numbers.add(pickedNumber);
             }

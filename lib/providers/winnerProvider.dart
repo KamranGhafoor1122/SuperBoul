@@ -12,11 +12,9 @@ import '../helpers/helperFunctions.dart';
 
 class WinnerProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
-  bool _isLoading = false;
+  bool _isLoading  = false;
   TransactionsModel? transactionHistory;
-
   TicketsListModel? ticketsListModel;
-
 
   EntriesModel? entriesModel;
   String? ticketId;

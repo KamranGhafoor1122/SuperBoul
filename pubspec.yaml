@@ -112,5 +112,5 @@ flutter:
       fonts:
         - asset: assets/fonts/Sk-Modernist-Regular.otf 
   #
-  # For details regarding fonts from package dependencies,
+  # For details regarding fonts from package dependencies ,
   # see https://flutter.dev/custom-fonts/#from-packages
