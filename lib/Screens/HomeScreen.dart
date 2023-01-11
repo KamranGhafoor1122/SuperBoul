@@ -450,8 +450,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 : RefreshIndicator(
               color: AppColor.redcolor,
               onRefresh: () async{
-
-
                 setState(() {
                   lottteryModel = null;
                   ticketModel = null;

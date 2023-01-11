@@ -4,20 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:superlotto/Screens/Widgets/PaymentSuccessfulAlert.dart';
 import 'package:superlotto/models/OrderStatusModel.dart';
-import 'package:superlotto/models/TicketsListModel.dart';
-import 'package:superlotto/models/WalletPointsModel.dart';
-import 'package:superlotto/providers/historyProvider.dart';
 import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
-import 'package:superlotto/providers/winnerProvider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
 import '../Constant/Color.dart';
-import '../models/EntriesModel.dart';
-import 'Widgets/customLoader.dart';
-import 'Widgets/ticketInfoWidget.dart';
 
 class PaymentWebView extends StatefulWidget {
   String url;
@@ -47,7 +38,6 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           },
           onPageStarted: (String url) {
             print("started page url: $url}");
-
           },
           onPageFinished: (String url) {
             print("finished page url: $url");
