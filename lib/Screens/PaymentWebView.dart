@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
 import 'package:superlotto/models/OrderStatusModel.dart';
 import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../Constant/Color.dart';
 
@@ -23,12 +25,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   late WebViewController webViewController;
   bool pageLoaded=false;
   Timer? timer;
-
+  OrderStatusModel? orderStatusModel;
 
 
   @override
   void initState() {
-    webViewController=WebViewController()
+   /* webViewController=WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
@@ -55,7 +57,8 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(widget.url));
+      ..loadRequest(Uri.parse(widget.url));*/
+    _launchUrl(widget.url);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
       timer = Timer.periodic(Duration(seconds: 5), (Timer t) => checkOrderStatus());
     });
@@ -64,10 +67,10 @@ class _PaymentWebViewState extends State<PaymentWebView> {
 
 
   checkOrderStatus() async{
-   OrderStatusModel? orderStatusModel = await Provider.of<LotteryProvider>(context,listen: false).callCheckOrderStatusAPI(context);
+   orderStatusModel = await Provider.of<LotteryProvider>(context,listen: false).callCheckOrderStatusAPI(context);
    if(orderStatusModel != null){
-      print("order status; ${orderStatusModel.toJson()}");
-      if(orderStatusModel.success != null && orderStatusModel.success == true){
+      print("order status; ${orderStatusModel!.toJson()}");
+      if(orderStatusModel!.success != null && orderStatusModel!.success == true){
         timer!.cancel();
         await Provider.of<LotteryProvider>(context,listen: false).callAddCreditAPI(context, widget.amount);
         await Provider.of<OnboradingProvider>(context,listen: false).fetchUser(context);
@@ -97,7 +100,23 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                 style: TextStyle(color: Colors.white, fontSize: size.width * 0.037),
               ),
             ),
-            body: pageLoaded?WebViewWidget(controller: webViewController):Center(child: SizedBox(
+            body: (orderStatusModel != null && orderStatusModel!.success == true)?
+            Center(child: CustomeText(FontWeight.w500,14,"Payment Successful",Colors.black)):
+            Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomeText(FontWeight.w500,14,"Waiting for payment",Colors.black),
+                SizedBox(height: 25,),
+                SizedBox(
+                  width: 250,
+                  child: CustomButton("Try Again", onpressed: (){
+                    _launchUrl(widget.url);
+                  }),
+                )
+              ],
+            ))
+
+            /*pageLoaded?WebViewWidget(controller: webViewController):Center(child: SizedBox(
                 width: 55,
                 height: 55,
                 child: const LoadingIndicator(
@@ -107,6 +126,17 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                     // Colors.orange,
                   ],
                   // strokeWidth: 4.0,
-                )),));
+                )),)*/
+
+
+    );
+  }
+
+
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw 'Could not launch $url';
+    }
   }
 }
