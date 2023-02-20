@@ -30,9 +30,10 @@ class CustomTextfeild extends StatelessWidget {
   final TextEditingController? controller;
   final int? maxnumber;
   bool readOnly;
+  bool obscureText;
   final TextInputType textInputType;
 
-   CustomTextfeild(this.maxnumber, this.controller, this.title, this.hint, {Key? key, this.textInputType = TextInputType.text,this.readOnly=false})
+   CustomTextfeild(this.maxnumber, this.controller, this.title, this.hint, {Key? key, this.obscureText= false,this.textInputType = TextInputType.text,this.readOnly=false})
       : super(key: key);
 
   @override
@@ -43,12 +44,12 @@ class CustomTextfeild extends StatelessWidget {
         controller: controller,
         keyboardType: textInputType,
         cursorColor: AppColor.redcolor,
+        obscureText: obscureText,
         decoration: InputDecoration(
           fillColor: const Color(0xffEAEAEA),
           filled: true,
           border: InputBorder.none,
           hintText: hint,
-
           label: Text(
             title!,
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),

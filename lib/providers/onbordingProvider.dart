@@ -8,6 +8,7 @@ import 'package:otp_text_field/style.dart';
 import 'package:superlotto/Constant/ApiConstant.dart';
 import 'package:superlotto/Screens/HomeScreen.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
+import 'package:superlotto/Screens/seller_screens/seller_dashboard.dart';
 import 'package:superlotto/Screens/setPin.dart';
 import 'package:http/http.dart' as http;
 import 'package:superlotto/helpers/helperFunctions.dart';
@@ -239,6 +240,7 @@ class OnboradingProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> body = <String, dynamic>{};
+
     body = signInMap;
 
     log(jsonEncode(body));
@@ -261,10 +263,56 @@ class OnboradingProvider with ChangeNotifier {
             HelperFunctions.saveInPreference("fcm_token", loginedUser.accessToken.toString());
             HelperFunctions.saveInPreference("fname", loginedUser.user!.firstName.toString());
             HelperFunctions.saveInPreference("lname", loginedUser.user!.lastName.toString());
+            HelperFunctions.saveInPreference("type", "user");
 
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                     builder: (context) => HomeScreen(
+                          token: loginedUser.accessToken.toString(),
+                        )),
+                (Route<dynamic> route) => false);
+          });
+        });
+      } else {
+        if (status == false) {
+          String msg = response['message'];
+          HelperFunctions.showAlert(context: context, header: "Error", widget: Text(msg), btnDoneText: "ok", onDone: () {}, onCancel: () {});
+        }
+      }
+    });
+  }
+  callSellerSignInAPI(BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+    Map<String, dynamic> body = <String, dynamic>{};
+    body = signInMap;
+
+    log(jsonEncode(body));
+
+    Map<String, String> header = <String, String>{};
+    FocusScope.of(context).requestFocus(FocusNode());
+    ApiManager networkCal = ApiManager(ApiConst.login, body, false, header);
+
+    networkCal.callPostAPI(context).then((response) {
+      debugPrint("API call finished");
+      bool status = response['success'];
+      _isLoading = false;
+      notifyListeners();
+      if (status == true) {
+        print("seller sign in res: ${jsonEncode(response)}");
+
+        AppUser loginedUser = AppUser.fromMap(response);
+        HelperFunctions.saveInPreference("token", loginedUser.accessToken.toString()).then((value) {
+          HelperFunctions.saveInPreference("dbUserId", loginedUser.user!.id.toString()).then((value) {
+            HelperFunctions.saveInPreference("referral", loginedUser.user!.referral.toString());
+            HelperFunctions.saveInPreference("fcm_token", loginedUser.accessToken.toString());
+            HelperFunctions.saveInPreference("fname", loginedUser.user!.firstName.toString());
+            HelperFunctions.saveInPreference("lname", loginedUser.user!.lastName.toString());
+            HelperFunctions.saveInPreference("type", "seller");
+
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => SellerDashboard(
                           token: loginedUser.accessToken.toString(),
                         )),
                 (Route<dynamic> route) => false);

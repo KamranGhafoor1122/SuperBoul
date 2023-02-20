@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:superlotto/Screens/HomeScreen.dart';
 
 import 'package:superlotto/Screens/LoginScreen.dart';
+import 'package:superlotto/Screens/seller_screens/seller_dashboard.dart';
 import 'package:superlotto/helpers/helperFunctions.dart';
 
 class AppSplashScreen extends StatefulWidget {
@@ -70,14 +71,34 @@ class _AppSplashScreenState extends State<AppSplashScreen> with SingleTickerProv
       secondAnim = true;
       setState(() {});
       String token = await HelperFunctions.getFromPreference("token");
+      String type = await HelperFunctions.getFromPreference("type");
+
 
       if(token.isNotEmpty){
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (context) => HomeScreen(
-                  token: token,
-                )),
-                (Route<dynamic> route) => false);
+
+        if(type.isNotEmpty){
+          if(type == "user"){
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => HomeScreen(
+                      token: token,
+                    )),
+                    (Route<dynamic> route) => false);
+          }
+          else{
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => SellerDashboard(
+                      token: token,
+                    )),
+                    (Route<dynamic> route) => false);
+          }
+
+        }
+        else{
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginScreen()), (Route<dynamic> route) => false);
+        }
+
       }
       else{
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginScreen()), (Route<dynamic> route) => false);

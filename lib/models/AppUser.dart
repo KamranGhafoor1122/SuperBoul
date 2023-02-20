@@ -77,7 +77,7 @@ class User {
       pushNotification: json["push_notification"],
       lat: json["lat"].toDouble(),
       long: json["long"].toDouble(),
-      dob: DateTime.parse(json["dob"]),
+      dob: json["dob"] != 0? DateTime.parse(json["dob"]):null,
       fcmToken: json["fcm_token"],
       profilePic: json["profile_pic"],
       referral: json["my_referral"].toString(),

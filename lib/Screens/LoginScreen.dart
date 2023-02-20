@@ -46,6 +46,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  _onPressSellerSignIn(BuildContext context) async {
+      Provider.of<OnboradingProvider>(context, listen: false).signInMap = {
+        "phone": _phoneController.text,
+        "password": _passwordController.text.trimRight(),
+      };
+
+      Provider.of<OnboradingProvider>(context, listen: false).callSellerSignInAPI(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _pin = pin;
                                   debugPrint("Completed:$pin");
                                 },
-                              ):CustomTextfeild(null, _passwordController, "Password", "Enter password"),
+                              ):CustomTextfeild(null, _passwordController, "Password", "Enter password",obscureText: true,),
 
 
                               SizedBox(height: 20.h),
@@ -202,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                      return;
                                    }
 
-
+                                   _onPressSellerSignIn(context);
                                 }
 
                               }),

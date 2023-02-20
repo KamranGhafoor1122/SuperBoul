@@ -13,9 +13,7 @@ import 'package:superlotto/Screens/InviteScreen.dart';
 import 'package:superlotto/Screens/LoginScreen.dart';
 import 'package:superlotto/Screens/PaymentWebView.dart';
 import 'package:superlotto/Screens/Widgets/ShowRulesAlert.dart';
-import 'package:superlotto/Screens/Widgets/WithdrawCashAlert.dart';
 import 'package:superlotto/Screens/Widgets/custom_gradient.dart';
-import 'package:superlotto/Screens/Widgets/custom_toast.dart';
 import 'package:superlotto/Screens/addTicketScreen.dart';
 import 'package:superlotto/Screens/ticketsHistory.dart';
 import 'package:superlotto/Screens/transactionHistory.dart';
@@ -27,11 +25,7 @@ import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 import 'package:tap_to_expand/tap_to_expand.dart';
 import '../Constant/Color.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
-
-import '../helpers/apiManager.dart';
 import '../models/LotteryModel.dart';
 import '../models/TicketModel.dart';
 import '../providers/historyProvider.dart';
@@ -44,12 +38,12 @@ import 'package:http/http.dart' as http;
 class HomeScreen extends StatefulWidget {
   String token;
   HomeScreen({Key? key, required this.token}) : super(key: key);
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   String? fname;
   String? lname;
   bool isLoading = false;
@@ -59,12 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final winningNumLimit = 69;
   var winningNumList = List.generate(69, (i) => i + 1);// generateWinningNumList();
   // HomeController controller = Get.put(HomeController());
+
   List generateWinningNumList () {
     var winningList = List.generate(winningNumLimit, (i) => i + 1);
     winningList.shuffle();
     print(winningList.sublist(0, winningNumAmt));
     return winningList.sublist(0, winningNumAmt);
   }
+
+
   @override
   void initState() {
     super.initState();
@@ -118,19 +115,14 @@ class _HomeScreenState extends State<HomeScreen> {
     header['Authorization'] = "Bearer ${widget.token}";
 
     final response = await http.get(Uri.parse(ApiConst.BASE_URL + ApiConst.getLottery), headers: header);
+
+
     print("getLottery");
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      // setState(() {
-      //   isLoading = false;
-      // });
       print("lottery resp: ${response.body}");
       return LottteryModel.fromMap(jsonDecode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       HelperFunctions.showAlert(
         context: context,
         header: "SuperBoul",
@@ -958,10 +950,12 @@ class _HomeScreenState extends State<HomeScreen> {
               numbers.add(pickedNumber);
             }
             else{
+
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Last number should be between 1 - 26"),
                 duration: Duration(seconds: 1),
               ));
+
               // CustomToast().showToast("Error", "Number should be between 1 - 29", true);
             }
           }
