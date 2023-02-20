@@ -15,13 +15,21 @@ import 'package:superlotto/providers/onbordingProvider.dart';
 import '../helpers/helperFunctions.dart';
 import 'Widgets/CustomeWidgets.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _phoneController = TextEditingController();
+
   TextEditingController _passwordController = TextEditingController();
 
   late String _pin;
+
+  String type = "user";
 
   _onPressSignIn(BuildContext context) async {
     if (_phoneController.text.isEmpty) {
@@ -51,10 +59,10 @@ class LoginScreen extends StatelessWidget {
                   Column(
                     children: [
                       SizedBox(
-                        height: 150.h,
+                        height: 120.h,
                       ),
                       Container(
-                        height: 620.h,
+                        height: 700.h,
                         width: double.infinity,
                         decoration: const BoxDecoration(
                           color: Color(0xffFFFFFF),
@@ -67,7 +75,7 @@ class LoginScreen extends StatelessWidget {
                             children: [
                               SizedBox(height: 0.h),
 
-                              SizedBox(height: 100.h),
+                              SizedBox(height: 80.h),
                               CustomeText(FontWeight.w600, 24.sp, 'Welcome SuperBoul,', AppColor.redcolor),
                               CustomeText(FontWeight.w400, 14.sp, 'Thank you for remember...', const Color(0xff666666)),
                               SizedBox(height: 30.h),
@@ -126,8 +134,8 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                               // CustomTextfeild(10,_phoneController,'Phone No',''),
-                              SizedBox(height: 30.h),
-                              OTPTextField(
+                              SizedBox(height: 20.h),
+                              type == "user" ? OTPTextField(
                                 length: 4,
                                 width: MediaQuery.of(context).size.width,
                                 fieldWidth: 50,
@@ -146,7 +154,8 @@ class LoginScreen extends StatelessWidget {
                                   _pin = pin;
                                   debugPrint("Completed:$pin");
                                 },
-                              ),
+                              ):CustomTextfeild(null, _passwordController, "Password", "Enter password"),
+
 
                               SizedBox(height: 20.h),
                               Row(
@@ -164,17 +173,59 @@ class LoginScreen extends StatelessWidget {
                                 ],
                               ),
 
-                              SizedBox(height: 30.h),
+
+                              SizedBox(height: 15.h),
                               CustomButton('Login', onpressed: () {
-                                if (_pin.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                    content: Text("Pin Is Required"),
-                                    duration: Duration(seconds: 3),
-                                  ));
-                                } else {
-                                  _onPressSignIn(context);
+                                if(type == "user"){
+                                  if (_pin.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                      content: Text("Pin Is Required"),
+                                      duration: Duration(seconds: 3),
+                                    ));
+                                  } else {
+                                    _onPressSignIn(context);
+                                  }
                                 }
+                                else{
+                                   if(_phoneController.text.isEmpty){
+                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                       content: Text("Phone is required"),
+                                       duration: Duration(seconds: 3),
+                                     ));
+                                     return;
+                                   }
+                                   if(_passwordController.text.isEmpty){
+                                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                       content: Text("Password is required"),
+                                       duration: Duration(seconds: 3),
+                                     ));
+                                     return;
+                                   }
+
+
+                                }
+
                               }),
+
+                              SizedBox(height: 10.h),
+
+                              Center(
+                                child: TextButton(onPressed: (){
+                                  setState(() {
+                                    if(type == "user"){
+                                      type = "seller";
+                                    }
+                                    else{
+                                      type = "user";
+                                    }
+                                  });
+                                }, child:
+
+                                type == "user"?CustomeText(FontWeight.w600,15,"Continue as Seller?",Colors.black,):
+                                CustomeText(FontWeight.w600,15,"Continue as User?",Colors.black,)
+                              ),
+                              ),
+
 
                               // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen(),));
 
@@ -210,7 +261,7 @@ class LoginScreen extends StatelessWidget {
                     ],
                   ),
                   Positioned(
-                      top: 15.h,
+                      top: 1.h,
                       left: 50.w,
                       child: Image.asset(
                         'assets/Images/splashlogo.png',
