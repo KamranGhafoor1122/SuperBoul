@@ -11,6 +11,7 @@ class ApiConst {
   static const String sendOTP = 'send-otp';
   static const String getLottery = 'lottery';
   static const String drawEntry = 'draw-entry';
+  static const String sellerPlayNumber = 'sellerPlayNumber';
   static const String addTicket = 'ticket/add';
   static const String addSellerTicket = 'sellerCreateTicket';
   static const String getTicket = 'ticket';

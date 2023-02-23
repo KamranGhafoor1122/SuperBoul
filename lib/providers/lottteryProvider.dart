@@ -163,6 +163,61 @@ class LotteryProvider with ChangeNotifier {
     });
   }
 
+
+  Future<void> callSellerdrawEntryAPI(
+      BuildContext context,
+      Map<String,dynamic> body
+      ) async {
+    _isLoading = true;
+
+    notifyListeners();
+    HelperFunctions.getFromPreference("token").then((value) {
+
+
+      print("seller play body: ${body}");
+
+      Map<String, String> header = <String, String>{};
+      log(value);
+      header['Authorization'] = "Bearer $value";
+      FocusScope.of(context).requestFocus(FocusNode());
+      ApiManager networkCal = ApiManager(ApiConst.sellerPlayNumber, body, false, header);
+      bool? status;
+      networkCal.callPostAPI(context).then((response) {
+        debugPrint("play API call finished");
+        status = response['success'];
+        _isLoading = false;
+        notifyListeners();
+        if (status != null && status == true) {
+          log(jsonEncode(response));
+
+          String msg = response['message'];
+          HelperFunctions.showAlert(
+            context: context,
+            header: "SuperBoul",
+            widget: Text(response['message'].toString()),
+            onDone: () {
+              Navigator.pop(context, true);
+            },
+            onCancel: () {},
+            btnDoneText: "Ok",
+          );
+
+          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PlayScreen()), (Route<dynamic> route) => false);
+        } else {
+          // Navigator.pop(context);
+          HelperFunctions.showAlert(
+            context: context,
+            header: "SuperBoul",
+            widget: Text(response['message'].toString()),
+            onDone: () {},
+            onCancel: () {},
+            btnDoneText: "Ok",
+          );
+        }
+      });
+    });
+  }
+
   late String ticketName;
   callcreateTicketAPI(
     BuildContext context,

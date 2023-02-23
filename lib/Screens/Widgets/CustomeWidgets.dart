@@ -33,6 +33,7 @@ class CustomTextfeild extends StatelessWidget {
   bool obscureText;
   final TextInputType textInputType;
 
+
    CustomTextfeild(this.maxnumber, this.controller, this.title, this.hint, {Key? key, this.obscureText= false,this.textInputType = TextInputType.text,this.readOnly=false})
       : super(key: key);
 
@@ -84,8 +85,10 @@ class CustomTextfeild extends StatelessWidget {
 class CustomButton extends StatelessWidget {
   String text;
   double width;
+  double? fontSize;
   VoidCallback onpressed;
-  CustomButton(this.text, {Key? key, this.width = double.infinity, required this.onpressed}) : super(key: key);
+  CustomButton(this.text, {Key? key, this.width = double.infinity,
+  this.fontSize, required this.onpressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +112,8 @@ class CustomButton extends StatelessWidget {
             //   ),
             // ),
             ),
-        child: Center(child: CustomeText(FontWeight.w500, 20.sp, text, const Color(0xffFFFFFF))),
+        child: Center(
+            child: CustomeText(FontWeight.w500, fontSize??20.sp, text, const Color(0xffFFFFFF))),
       ),
     );
   }
