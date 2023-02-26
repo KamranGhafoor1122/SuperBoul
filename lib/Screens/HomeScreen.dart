@@ -99,10 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         isLoading = false;
       });
-      /*setState(() {
-        appUser = value;
-        isLoading = false;
-      });*/
     });
   }
 
@@ -950,7 +946,6 @@ class _HomeScreenState extends State<HomeScreen> {
               numbers.add(pickedNumber);
             }
             else{
-
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Last number should be between 1 - 26"),
                 duration: Duration(seconds: 1),
@@ -1005,10 +1000,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       if (chosen) {
-        print("*****0");
         numbers.remove(pickedNumber);
-      }
-      print(numbers);
+       }
     });
   }
 

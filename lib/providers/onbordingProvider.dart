@@ -281,7 +281,7 @@ class OnboradingProvider with ChangeNotifier {
       }
     });
   }
-  callSellerSignInAPI(BuildContext context) async {
+  callSellerSignInAPI(BuildContext context,String phone) async {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> body = <String, dynamic>{};
@@ -302,22 +302,47 @@ class OnboradingProvider with ChangeNotifier {
         print("seller sign in res: ${jsonEncode(response)}");
 
         AppUser loginedUser = AppUser.fromMap(response);
-        HelperFunctions.saveInPreference("token", loginedUser.accessToken.toString()).then((value) {
-          HelperFunctions.saveInPreference("dbUserId", loginedUser.user!.id.toString()).then((value) {
-            HelperFunctions.saveInPreference("referral", loginedUser.user!.referral.toString());
-            HelperFunctions.saveInPreference("fcm_token", loginedUser.accessToken.toString());
-            HelperFunctions.saveInPreference("fname", loginedUser.user!.firstName.toString());
-            HelperFunctions.saveInPreference("lname", loginedUser.user!.lastName.toString());
-            HelperFunctions.saveInPreference("type", "seller");
 
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                    builder: (context) => SellerDashboard(
-                          token: loginedUser.accessToken.toString(),
-                        )),
-                (Route<dynamic> route) => false);
+        print("app user; ${loginedUser.user!.roleId}");
+
+        if(loginedUser.user?.roleId == "3"){
+          HelperFunctions.saveInPreference("token", loginedUser.accessToken.toString()).then((value) {
+            HelperFunctions.saveInPreference("dbUserId", loginedUser.user!.id.toString()).then((value) {
+              HelperFunctions.saveInPreference("phone", phone);
+              HelperFunctions.saveInPreference("referral", loginedUser.user!.referral.toString());
+              HelperFunctions.saveInPreference("fcm_token", loginedUser.accessToken.toString());
+              HelperFunctions.saveInPreference("fname", loginedUser.user!.firstName.toString());
+              HelperFunctions.saveInPreference("lname", loginedUser.user!.lastName.toString());
+              HelperFunctions.saveInPreference("type", "seller");
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => SellerDashboard(
+                        token: loginedUser.accessToken.toString(),
+                      )),
+                      (Route<dynamic> route) => false);
+            });
           });
-        });
+        }
+        else{
+          HelperFunctions.saveInPreference("token", loginedUser.accessToken.toString()).then((value) {
+            HelperFunctions.saveInPreference("dbUserId", loginedUser.user!.id.toString()).then((value) {
+              HelperFunctions.saveInPreference("referral", loginedUser.user!.referral.toString());
+              HelperFunctions.saveInPreference("fcm_token", loginedUser.accessToken.toString());
+              HelperFunctions.saveInPreference("fname", loginedUser.user!.firstName.toString());
+              HelperFunctions.saveInPreference("lname", loginedUser.user!.lastName.toString());
+              HelperFunctions.saveInPreference("type", "user");
+
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => HomeScreen(
+                        token: loginedUser.accessToken.toString(),
+                      )),
+                      (Route<dynamic> route) => false);
+            });
+          });
+        }
+
       } else {
         if (status == false) {
           String msg = response['message'];

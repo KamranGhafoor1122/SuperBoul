@@ -54,6 +54,7 @@ class User {
     this.profilePic,
     this.referral,
     this.credit,
+    this.roleId
   });
 
   int? id;
@@ -69,6 +70,8 @@ class User {
   String? referral;
   String? credit;
 
+  String? roleId;
+
   factory User.fromMap(Map<String, dynamic> json) => User(
       id: json["id"],
       firstName: json["first_name"],
@@ -80,6 +83,7 @@ class User {
       dob: json["dob"] != 0? DateTime.parse(json["dob"]):null,
       fcmToken: json["fcm_token"],
       profilePic: json["profile_pic"],
+      roleId: json["role_id"] as String?,
       referral: json["my_referral"].toString(),
       credit: json.containsKey("credit") ? json["credit"].toString() : "0");
 
@@ -91,7 +95,8 @@ class User {
         "push_notification": pushNotification,
         "lat": lat,
         "long": long,
-        "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
+        "role_id":roleId,
+        "dob": dob == null ? "":"${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
         "fcm_token": fcmToken,
         "profile_pic": profilePic,
       };

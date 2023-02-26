@@ -37,7 +37,7 @@ class PaymentSuccessfulAlert extends StatelessWidget {
 
             CustomButton('Done', onpressed: () {
                Navigator.pop(context);
-               Navigator.pop(context);
+
             }),
 
             SizedBox(height: 15,),

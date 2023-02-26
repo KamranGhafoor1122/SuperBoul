@@ -2,19 +2,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 import 'package:superlotto/Constant/ApiConstant.dart';
 import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/LoginScreen.dart';
+import 'package:superlotto/Screens/PaymentWebView.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
 import 'package:superlotto/Screens/Widgets/customLoader.dart';
 import 'package:superlotto/Screens/Widgets/ticketInfoWidget.dart';
+import 'package:superlotto/Screens/seller_screens/SellerPaymentWebView.dart';
+import 'package:superlotto/Screens/seller_screens/Winners.dart';
 import 'package:superlotto/Screens/seller_screens/play_lottery.dart';
 import 'package:superlotto/helpers/helperFunctions.dart';
 import 'package:superlotto/models/CreateSellerTicker.dart';
 import 'package:superlotto/models/LotteryModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:superlotto/models/PaymentModel.dart';
+import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:tap_to_expand/tap_to_expand.dart';
+
 
 class SellerDashboard extends StatefulWidget {
   String token;
@@ -30,7 +37,10 @@ class _SellerDashboardState extends State<SellerDashboard> {
   bool isLoading = false;
   final ourFormat = new DateFormat('yyyy-MM-dd hh:mm');
   LottteryModel? lottteryModel;
+  final TextEditingController _creditamountController = TextEditingController();
+  final TextEditingController _numberOfTickets = TextEditingController();
   CreateSellerTicket? createSellerTicket;
+
 
   @override
   void initState() {
@@ -282,23 +292,115 @@ class _SellerDashboardState extends State<SellerDashboard> {
 
                                   CustomButton("Create Ticket And Play",
                                       fontSize: 16.sp, onpressed: () async {
-                                    await createTicket();
-                                    setState(() {
-                                      isLoading = false;
-                                    });
 
-                                    if (createSellerTicket != null) {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (ctx) {
-                                        return PlayLottery(
-                                            createSellerTicket:
-                                            createSellerTicket!,
-                                        lottteryModel: lottteryModel!,
-                                        );
-                                      }));
-                                    }
+
+                                        /*HelperFunctions.showAlert(
+                                            context: context,
+                                            header: "Add Amount",
+                                            widget: Container(
+                                              height: size.height * 0.1,
+                                              child: Column(
+                                                children: [
+                                                  CustomTextfeild(15, _creditamountController, 'Amount', ''),
+                                                ],
+                                              ),
+                                            ),
+                                            onDone: () async {
+                                              if (_creditamountController.text.trim().isEmpty) {
+                                                // Navigator.pop(context);
+                                                HelperFunctions.showSnackBar(context: context, alert: "Please enter amount");
+                                              } else {
+                                                setState((){
+                                                  isLoading = true;
+                                                });
+
+                                                PaymentModel? payment= await Provider.of<LotteryProvider>(context, listen: false).callCreatePaymentAPI(context, _creditamountController.text);
+
+                                                String amount = _creditamountController.text;
+                                                setState(()  {
+                                                  // onboardingProvider.user!.user!.credit = value!.user!.credit;
+                                                  isLoading = false;
+                                                  _creditamountController.text = "";
+                                                });
+
+                                                if(payment != null && lottteryModel != null){
+                                                  Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SellerPaymentWebView(url: payment.paymentUrl??"",amount: amount,
+                                                  token: widget.token,
+                                                    lotteryModel: lottteryModel!,
+                                                  )));
+                                                }
+
+                                              }
+                                            },
+                                            onCancel: () {},
+                                            btnDoneText: "Add",
+                                            btnCancelText: "Cancel");*/
+
+
+
+
+                                        HelperFunctions.showAlert(
+                                            context: context,
+                                            header: "Create Tickets",
+                                            widget: Container(
+                                              height: size.height * 0.1,
+                                              child: Column(
+                                                children: [
+                                                  CustomTextfeild(15, _numberOfTickets, 'Number of tickets', ''),
+                                                ],
+                                              ),
+                                            ),
+                                            onDone: () async {
+                                              if (_numberOfTickets.text.trim().isEmpty) {
+                                                // Navigator.pop(context);
+                                                HelperFunctions.showSnackBar(context: context, alert: "Please enter number of tickets");
+                                              } else {
+                                                setState((){
+                                                  isLoading = true;
+                                                });
+
+                                                await createTicket(_numberOfTickets.text);
+
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+
+                                                if (createSellerTicket != null) {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(builder: (ctx) {
+                                                        return PlayLottery(
+                                                          createSellerTicket:
+                                                          createSellerTicket!,
+                                                          lottteryModel: lottteryModel!,
+                                                        );
+                                                      }));
+                                                }
+
+                                              }
+                                            },
+                                            onCancel: () {},
+                                            btnDoneText: "Add",
+                                            btnCancelText: "Cancel");
+
+
                                   }),
 
+
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+                                  CustomButton("Show Winners", onpressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx)=>WinnersPage()));
+                                  },fontSize: 20,),
+
+
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+                                  /*CustomButton("Print Tickets", onpressed: (){
+                                  },fontSize: 20,)*/
 
                                 ],
                               )
@@ -354,7 +456,9 @@ class _SellerDashboardState extends State<SellerDashboard> {
     }
   }
 
-  Future<void> createTicket() async {
+
+
+  Future<void> createTicket(String numberOfTickets) async {
     setState(() {
       isLoading = true;
     });
@@ -362,15 +466,24 @@ class _SellerDashboardState extends State<SellerDashboard> {
 
     header['Authorization'] = "Bearer ${widget.token}";
 
-    final response = await http.get(
+    Map<String,dynamic> body = {
+      "number_of_tickets": numberOfTickets,
+    };
+
+    final response = await http.post(
         Uri.parse(ApiConst.BASE_URL + ApiConst.addSellerTicket),
+        body: body,
         headers: header);
 
     if (response.statusCode == 200) {
-      print("lottery resp: ${response.body}");
+      print("crate ticket resp: ${response.body}");
       createSellerTicket =
           CreateSellerTicket.fromJson(jsonDecode(response.body));
     } else {
+      setState(() {
+        isLoading = false;
+      });
+
       HelperFunctions.showAlert(
         context: context,
         header: "SuperBoul",
@@ -379,7 +492,8 @@ class _SellerDashboardState extends State<SellerDashboard> {
         onCancel: () {},
         btnDoneText: "Ok",
       );
-      throw Exception('Failed to load album');
+      //throw Exception('Failed to load album');
     }
   }
+
 }

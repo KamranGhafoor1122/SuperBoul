@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:superlotto/Screens/Widgets/PaymentSuccessfulAlert.dart';
 import 'dart:math' as math;
-
-import 'package:superlotto/models/LotteryModel.dart';
 import 'package:superlotto/models/OrderStatusModel.dart';
 import 'package:superlotto/models/PaymentModel.dart';
-import 'package:superlotto/models/TicketModel.dart';
+import 'package:superlotto/models/PlayLotteryModel.dart';
 import 'package:superlotto/models/WalletPointsModel.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 import 'package:uuid/uuid.dart';
@@ -106,18 +103,6 @@ class LotteryProvider with ChangeNotifier {
 
       body["lottery_id"] = lotteryId;
       body["number"] = lotteryNumbers;
-      // body["number[1]"] = "${lotteryNumbers[1]}";
-      // body["number[2]"] = "${lotteryNumbers[2]}";
-      // body["number[3]"] = "${lotteryNumbers[3]}";
-      // body["number[4]"] = "${lotteryNumbers[4]}";
-      // body["number[5]"] = "${lotteryNumbers[5]}";
-      // body["number[0]"] = lotteryNumbers[0];
-      // body["number[1]"] = lotteryNumbers[1];
-      // body["number[2]"] = lotteryNumbers[2];
-      // body["number[3]"] = lotteryNumbers[3];
-      // body["number[4]"] = lotteryNumbers[4];
-      // body["number[5]"] = lotteryNumbers[5];
-      // body["number"] = lotteryNumber;
 
       log(jsonEncode(body));
 
@@ -164,47 +149,32 @@ class LotteryProvider with ChangeNotifier {
   }
 
 
-  Future<void> callSellerdrawEntryAPI(
+  Future<PlayLotteryModel?> callSellerdrawEntryAPI(
       BuildContext context,
       Map<String,dynamic> body
       ) async {
     _isLoading = true;
 
     notifyListeners();
-    HelperFunctions.getFromPreference("token").then((value) {
-
-
+     String value=await HelperFunctions.getFromPreference("token");
       print("seller play body: ${body}");
-
       Map<String, String> header = <String, String>{};
-      log(value);
+
+      print("token value $value");
       header['Authorization'] = "Bearer $value";
       FocusScope.of(context).requestFocus(FocusNode());
       ApiManager networkCal = ApiManager(ApiConst.sellerPlayNumber, body, false, header);
       bool? status;
-      networkCal.callPostAPI(context).then((response) {
+       Map<String,dynamic> response =   await networkCal.callPostAPI(context);
         debugPrint("play API call finished");
         status = response['success'];
         _isLoading = false;
         notifyListeners();
-        if (status != null && status == true) {
+        if(status != null && status == true) {
           log(jsonEncode(response));
-
-          String msg = response['message'];
-          HelperFunctions.showAlert(
-            context: context,
-            header: "SuperBoul",
-            widget: Text(response['message'].toString()),
-            onDone: () {
-              Navigator.pop(context, true);
-            },
-            onCancel: () {},
-            btnDoneText: "Ok",
-          );
-
-          // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PlayScreen()), (Route<dynamic> route) => false);
-        } else {
-          // Navigator.pop(context);
+           PlayLotteryModel playLotteryModel = PlayLotteryModel.fromJson(response);
+           return playLotteryModel;
+         } else {
           HelperFunctions.showAlert(
             context: context,
             header: "SuperBoul",
@@ -212,10 +182,8 @@ class LotteryProvider with ChangeNotifier {
             onDone: () {},
             onCancel: () {},
             btnDoneText: "Ok",
-          );
+           );
         }
-      });
-    });
   }
 
   late String ticketName;
@@ -522,6 +490,57 @@ class LotteryProvider with ChangeNotifier {
    callGetWalletPointsAPI(
       BuildContext context,
   {bool? showAlert=true}
+      ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      HelperFunctions.getFromPreference("token").then((value) {
+        Map<String, dynamic> body = <String, dynamic>{};
+
+
+        Map<String, String> header = <String, String>{};
+        header['Authorization'] = "Bearer $value";
+        FocusScope.of(context).requestFocus(FocusNode());
+        ApiManager networkCal = ApiManager(ApiConst.getWalletPoints, body, false, header);
+        int? status;
+        networkCal.callGetAPIPayment(context).then((response) {
+          debugPrint("API call finished");
+          status = response['statusCode'];
+          _isLoading = false;
+          notifyListeners();
+          WalletPoints? points;
+
+          if (status == 200) {
+            points = WalletPoints.fromJson(jsonDecode(response["body"]));
+            if(showAlert!){
+              showDialog(context: context, builder: (ctx)=>PaymentSuccessfulAlert(points: points!.walletPoints??""));
+            }
+            walletPoints = points;
+            return points;
+            // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const PlayScreen()), (Route<dynamic> route) => false);
+          } else {
+            // Navigator.pop(context);
+            HelperFunctions.showAlert(
+              context: context,
+              header: "SuperBoul",
+              widget: Text(response['message'].toString()),
+              onDone: () {},
+              onCancel: () {},
+              btnDoneText: "Ok",
+            );
+          }
+        });
+      });
+    } catch (e) {
+      HelperFunctions.showSnackBar(context: context, alert: "Something went wrong");
+    }
+  }
+
+
+  callSellerGetWalletPointsAPI(
+      BuildContext context,
+      {bool? showAlert=true}
       ) async {
     _isLoading = true;
     notifyListeners();

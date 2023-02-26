@@ -51,8 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
         "phone": _phoneController.text,
         "password": _passwordController.text.trimRight(),
       };
-
-      Provider.of<OnboradingProvider>(context, listen: false).callSellerSignInAPI(context);
+      Provider.of<OnboradingProvider>(context, listen: false).callSellerSignInAPI(context,_phoneController.text);
   }
 
   @override

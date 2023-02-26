@@ -1,36 +1,47 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:superlotto/Constant/ApiConstant.dart';
+import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
+import 'package:superlotto/Screens/Widgets/customLoader.dart';
+import 'package:superlotto/Screens/seller_screens/play_lottery.dart';
+import 'package:superlotto/helpers/helperFunctions.dart';
+import 'package:superlotto/models/CreateSellerTicker.dart';
+import 'package:superlotto/models/LotteryModel.dart';
 import 'package:superlotto/models/OrderStatusModel.dart';
 import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../Constant/Color.dart';
 
-class PaymentWebView extends StatefulWidget {
+class SellerPaymentWebView extends StatefulWidget {
   String url;
   String amount;
-  PaymentWebView({Key? key,required this.url,required this.amount}) : super(key: key);
+  String token;
+  LottteryModel lotteryModel;
+  SellerPaymentWebView({Key? key,required this.url,required this.amount,required this.token,required this.lotteryModel}) : super(key: key);
 
   @override
-  State<PaymentWebView> createState() => _PaymentWebViewState();
+  State<SellerPaymentWebView> createState() => _SellerPaymentWebViewState();
 }
 
-class _PaymentWebViewState extends State<PaymentWebView> {
+class _SellerPaymentWebViewState extends State<SellerPaymentWebView> {
   late WebViewController webViewController;
   bool pageLoaded=false;
   Timer? timer;
+  bool isLoading = false;
+  CreateSellerTicket? createSellerTicket;
   OrderStatusModel? orderStatusModel;
 
 
   @override
   void initState() {
-   /* webViewController=WebViewController()
+
+    /* webViewController=WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
@@ -58,6 +69,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         ),
       )
       ..loadRequest(Uri.parse(widget.url));*/
+
     _launchUrl(widget.url);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
       timer = Timer.periodic(Duration(seconds: 5), (Timer t) => checkOrderStatus());
@@ -69,12 +81,12 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   checkOrderStatus() async{
    orderStatusModel = await Provider.of<LotteryProvider>(context,listen: false).callCheckOrderStatusAPI(context);
    if(orderStatusModel != null){
-      print("order status; ${orderStatusModel!.toJson()}");
       if(orderStatusModel!.success != null && orderStatusModel!.success == true){
         timer!.cancel();
-        await Provider.of<LotteryProvider>(context,listen: false).callAddCreditAPI(context, widget.amount);
-        await Provider.of<OnboradingProvider>(context,listen: false).fetchUser(context);
-        await Provider.of<LotteryProvider>(context,listen: false).callGetWalletPointsAPI(context);
+       // await Provider.of<LotteryProvider>(context,listen: false).callAddCreditAPI(context, widget.amount);
+        /*await Provider.of<OnboradingProvider>(context,listen: false).fetchUser(context);
+        await Provider.of<LotteryProvider>(context,listen: false).callGetWalletPointsAPI(context);*/
+
       }
    }
   }
@@ -101,20 +113,25 @@ class _PaymentWebViewState extends State<PaymentWebView> {
               ),
             ),
             body: (orderStatusModel != null && orderStatusModel!.success == true)?
-            Center(child: CustomeText(FontWeight.w500,14,"Payment Successful",Colors.black)):
-            Center(child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomeText(FontWeight.w500,14,"Waiting for payment",Colors.black),
-                SizedBox(height: 25,),
-                SizedBox(
-                  width: 250,
-                  child: CustomButton("Try Again", onpressed: (){
-                    _launchUrl(widget.url);
-                  }),
-                )
-              ],
-            ))
+            CustomLoader(
+                isLoading: isLoading,
+                child: Center(child: CustomeText(FontWeight.w500,14,"Payment Successful",Colors.black))):
+            CustomLoader(
+              isLoading: isLoading,
+              child: Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomeText(FontWeight.w500,14,"Waiting for payment",Colors.black),
+                  SizedBox(height: 25,),
+                  SizedBox(
+                    width: 250,
+                    child: CustomButton("Try Again", onpressed: (){
+                      _launchUrl(widget.url);
+                    }),
+                  )
+                ],
+              )),
+            )
 
             /*pageLoaded?WebViewWidget(controller: webViewController):Center(child: SizedBox(
                 width: 55,
@@ -137,6 +154,36 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw 'Could not launch $url';
+    }
+  }
+
+
+  Future<void> createTicket() async {
+    setState(() {
+      isLoading = true;
+    });
+    Map<String, String> header = <String, String>{};
+
+    header['Authorization'] = "Bearer ${widget.token}";
+
+    final response = await http.get(
+        Uri.parse(ApiConst.BASE_URL + ApiConst.addSellerTicket),
+        headers: header);
+
+    if (response.statusCode == 200) {
+      print("lottery resp: ${response.body}");
+      createSellerTicket =
+          CreateSellerTicket.fromJson(jsonDecode(response.body));
+    } else {
+      HelperFunctions.showAlert(
+        context: context,
+        header: "SuperBoul",
+        widget: Text(response.body.toString()),
+        onDone: () {},
+        onCancel: () {},
+        btnDoneText: "Ok",
+      );
+      throw Exception('Failed to load album');
     }
   }
 }

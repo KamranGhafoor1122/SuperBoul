@@ -58,6 +58,7 @@ dependencies:
   uuid: ^3.0.7
   slide_countdown:
   url_launcher: ^6.1.7
+  printing: ^5.9.3
 
 dev_dependencies:
   flutter_test:

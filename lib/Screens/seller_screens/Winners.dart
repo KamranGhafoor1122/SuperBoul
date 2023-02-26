@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:superlotto/Constant/Color.dart';
+import 'package:superlotto/Screens/Widgets/customLoader.dart';
+import 'package:superlotto/Screens/Widgets/ticketInfoWidget.dart';
+import 'package:superlotto/models/SellerWinnersModel.dart';
 import 'package:superlotto/models/TicketsListModel.dart';
 import 'package:superlotto/providers/historyProvider.dart';
 import 'package:superlotto/providers/winnerProvider.dart';
 
-import '../Constant/Color.dart';
-import '../models/EntriesModel.dart';
-import 'Widgets/customLoader.dart';
-import 'Widgets/ticketInfoWidget.dart';
-
-class PastEntries extends StatefulWidget {
-  PastEntries({Key? key}) : super(key: key);
+class WinnersPage extends StatefulWidget {
+  WinnersPage({Key? key}) : super(key: key);
 
   @override
-  State<PastEntries> createState() => _PastEntriesState();
+  State<WinnersPage> createState() => _WinnersPageState();
 }
 
-class _PastEntriesState extends State<PastEntries> {
+class _WinnersPageState extends State<WinnersPage> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<WinnerProvider>(context, listen: false).callGetEntriesAPI(context);
+      Provider.of<WinnerProvider>(context, listen: false).callSellerGetEntriesAPI(context);
     });
   }
 
@@ -31,7 +30,7 @@ class _PastEntriesState extends State<PastEntries> {
     var size = MediaQuery.of(context).size;
     return Consumer<WinnerProvider>(builder: (context, winnerProvider, child) {
       return CustomLoader(
-          isLoading: winnerProvider.isLoading,
+          isLoading: winnerProvider.fetchingSellerWinners,
           child: Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -44,11 +43,11 @@ class _PastEntriesState extends State<PastEntries> {
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.025, vertical: 10),
               child: ListView.builder(
-                  itemCount: winnerProvider.entriesModel == null || winnerProvider.entriesModel!.entriesList!.isEmpty
+                  itemCount: winnerProvider.sellerWinnersModel == null || winnerProvider.sellerWinnersModel!.data!.isEmpty
                       ? 0
-                      : winnerProvider.entriesModel!.entriesList!.length,
+                      : winnerProvider.sellerWinnersModel!.data!.length,
                   itemBuilder: (context, index) {
-                    Entry entry = winnerProvider.entriesModel!.entriesList![index];
+                    Data entry = winnerProvider.sellerWinnersModel!.data![index];
                     return Container(
                       padding: EdgeInsets.all(15),
                       margin: EdgeInsets.symmetric(vertical: 5),
@@ -82,11 +81,11 @@ class _PastEntriesState extends State<PastEntries> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                          winnerProvider.entriesModel == null
+                          winnerProvider.sellerWinnersModel == null
                               ? Container()
                               : TicketInfoWidget(
-                            title: "TOTAL TICKETS",
-                            info: entry.total_tickets.toString(),
+                            title: "USER NAME",
+                            info: entry.userName??"None",
                           ),
                           // SizedBox(
                           //   height: size.height * 0.007,
@@ -100,16 +99,26 @@ class _PastEntriesState extends State<PastEntries> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                          winnerProvider.entriesModel == null
+
+                          winnerProvider.sellerWinnersModel == null
+                              ? Container()
+                              : TicketInfoWidget(
+                            title: "PRIZE NUMBERS",
+                            info: entry.prizeNumber.toString(),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.007,
+                          ),
+                          winnerProvider.sellerWinnersModel == null
                               ? Container()
                               : TicketInfoWidget(
                             title: "PRIZE",
                             info:
-                            entry.prize.contains("first")?
+                            entry.prize!.contains("first")?
                                 "1st prize":
-                            entry.prize.contains("second")?
+                            entry.prize!.contains("second")?
                                 "2nd prize":
-                            entry.prize.contains("third")?
+                            entry.prize!.contains("third")?
                                 "3rd prize":
                             entry.prize.toString(),
                             color: Colors.red,
@@ -117,7 +126,7 @@ class _PastEntriesState extends State<PastEntries> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                          winnerProvider.entriesModel == null
+                          winnerProvider.sellerWinnersModel == null
                               ? Container()
                               : TicketInfoWidget(
                             title: "AMOUNT #",
@@ -126,12 +135,7 @@ class _PastEntriesState extends State<PastEntries> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                          winnerProvider.entriesModel == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "DATE",
-                            info: DateFormat('yyyy-MM-dd').format(DateTime.parse(entry.date.toString())).toString(),
-                          ),
+
                           // SizedBox(
                           //   height: size.height * 0.007,
                           // ),
