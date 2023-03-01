@@ -18,6 +18,7 @@ class ApiConst {
   static const String gettransactions = 'transactions';
   static const String getTicketsList = 'tickets';
   static const String getWinnings = 'get-winnings';
+  static const String getSellerTickets = 'sellerGetAllTickets';
   static const String getSellerWinners = 'sellerGetWinners';
   static const String getEntriesList = 'entries?ticket_id=';
   static const String addcredit = 'credit';

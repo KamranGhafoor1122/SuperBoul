@@ -11,6 +11,7 @@ import 'package:superlotto/Screens/PaymentWebView.dart';
 import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
 import 'package:superlotto/Screens/Widgets/customLoader.dart';
 import 'package:superlotto/Screens/Widgets/ticketInfoWidget.dart';
+import 'package:superlotto/Screens/seller_screens/SellerAllTickets.dart';
 import 'package:superlotto/Screens/seller_screens/SellerPaymentWebView.dart';
 import 'package:superlotto/Screens/seller_screens/Winners.dart';
 import 'package:superlotto/Screens/seller_screens/play_lottery.dart';
@@ -399,6 +400,10 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                     height: 30,
                                   ),
 
+                                  CustomButton("Show All Tickets", onpressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SellerAllTickets()));
+                                  },fontSize: 20,),
+
                                   /*CustomButton("Print Tickets", onpressed: (){
                                   },fontSize: 20,)*/
 
@@ -435,6 +440,9 @@ class _SellerDashboardState extends State<SellerDashboard> {
     Map<String, String> header = <String, String>{};
 
     header['Authorization'] = "Bearer ${widget.token}";
+
+    print("seller token: ${widget.token}");
+
 
     final response = await http.get(
         Uri.parse(ApiConst.BASE_URL + ApiConst.getLottery),

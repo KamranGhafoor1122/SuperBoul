@@ -9,7 +9,7 @@ class LottteryModel {
 
   factory LottteryModel.fromMap(Map<String, dynamic> json) => LottteryModel(
         message: json["message"],
-        data: Data.fromMap(json["data"]),
+        data: json["data"].isEmpty ? null : Data.fromMap(json["data"]),
       );
 }
 

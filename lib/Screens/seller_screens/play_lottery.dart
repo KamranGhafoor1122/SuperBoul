@@ -32,6 +32,8 @@ class _PlayLotteryState extends State<PlayLottery> {
   TextEditingController amount = TextEditingController();
   CS.Data? ticketModel;
 
+  bool nameFinal = false;
+
   RxList numbers = [].obs;
 
 
@@ -70,141 +72,173 @@ class _PlayLotteryState extends State<PlayLottery> {
                      height: 30,
                    ),
 
+                   if(!nameFinal)...[
+                     SizedBox(height: 20,),
 
 
-                   CustomeText(FontWeight.w600, 15, "Playing ${index+1}/${widget.createSellerTicket.data?.length}", Colors.black),
-                   SizedBox(height: 20,),
+                     CustomTextfeild(null, name, "Name", "Name",),
+                     SizedBox(height: 20,),
+
+                     CustomTextfeild(null, phoneNumber, "Phone", "Phone No.",textInputType: TextInputType.number,),
+                     SizedBox(height: 20,),
+
+                     CustomTextfeild(null, tickerNumber, "Ticker Number", "Ticket No.",readOnly: true,),
+                     SizedBox(height: 20,),
 
 
-                    CustomTextfeild(null, name, "Name", "Name",readOnly: true,),
-                   SizedBox(height: 20,),
+                     CustomButton('Proceed', onpressed: () async {
+                       if(name.text.isEmpty){
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Name cannot be empty")));
+                         return;
+                       }
+                       if(phoneNumber.text.isEmpty){
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Phone cannot be empty")));
+                         return;
+                       }
 
-                   CustomTextfeild(null, phoneNumber, "Phone", "Phone No.",textInputType: TextInputType.number,readOnly: true,),
-                   SizedBox(height: 20,),
+                       setState(() {
+                         nameFinal = true;
+                       });
+
+                     })
+                   ],
 
 
-                   CustomTextfeild(null, tickerNumber, "Ticker Number", "Ticket No.",readOnly: true,),
-                   SizedBox(height: 20,),
 
 
 
 
-                   Container(
-                       height: size.height * 0.05,
-                       width: size.width * 0.9,
-                       alignment: Alignment.center,
-                       child: ListView.builder(
-                           scrollDirection: Axis.horizontal,
-                           itemCount:numbers.length,
-                           shrinkWrap: true,
-                           itemBuilder: (context, index) {
-                             return Card(
-                               elevation: 1,
-                               color:  Colors.orangeAccent,
-                               shape: RoundedRectangleBorder(
-                                   borderRadius: BorderRadius.circular(8)
-                               ),
-                               child: InkWell(
-                                 onTap: () => removeNum(numbers[index], context),
-                                 child: Container(
-                                   width:  size.height * 0.05,
-                                   // height: 20,
-                                   child: Center(
-                                     child:Padding(
-                                         padding: const EdgeInsets.all(8.0),
-                                         child: Text(
-                                           '${numbers[index]}',
-                                           style: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w600,),
-                                         )
+
+                   if(nameFinal)...[
+
+                     CustomeText(FontWeight.w600, 15, "Playing ${index+1}/${widget.createSellerTicket.data?.length}", Colors.black),
+
+                     SizedBox(
+                       height: size.height*0.01,
+                     ),
+
+
+                     Container(
+                         height: size.height * 0.05,
+                         width: size.width * 0.9,
+                         alignment: Alignment.center,
+                         child: ListView.builder(
+                             scrollDirection: Axis.horizontal,
+                             itemCount:numbers.length,
+                             shrinkWrap: true,
+                             itemBuilder: (context, index) {
+                               return Card(
+                                 elevation: 1,
+                                 color:  Colors.orangeAccent,
+                                 shape: RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(8)
+                                 ),
+                                 child: InkWell(
+                                   onTap: () => removeNum(numbers[index], context),
+                                   child: Container(
+                                     width:  size.height * 0.05,
+                                     // height: 20,
+                                     child: Center(
+                                       child:Padding(
+                                           padding: const EdgeInsets.all(8.0),
+                                           child: Text(
+                                             '${numbers[index]}',
+                                             style: GoogleFonts.poppins(color: Colors.white,fontWeight: FontWeight.w600,),
+                                           )
+                                       ),
                                      ),
                                    ),
                                  ),
-                               ),
-                             );
-                           })
-                   ),
+                               );
+                             })
+                     ),
 
 
 
-                   SizedBox(
-                     height: size.height*0.01,
-                   ),
+                     SizedBox(
+                       height: size.height*0.01,
+                     ),
 
-                   SizedBox(
-                       height: size.height * 0.6,
-                       child: _numberChoices(winningNumLimit,context)),
+                     SizedBox(
+                         height: size.height * 0.6,
+                         child: _numberChoices(winningNumLimit,context)),
 
-                   SizedBox(
-                     height: size.height*0.01,
-                   ),
+                     SizedBox(
+                       height: size.height*0.01,
+                     ),
 
-                   CustomButton('Play', onpressed: () async {
+                     CustomButton('Play', onpressed: () async {
 
-                     if (numbers.length<6) {
-                       HelperFunctions.showSnackBar(context: context, alert: "Please select six numbers");
-                       return;
-                     }
-
-
+                       if (numbers.length<6) {
+                         HelperFunctions.showSnackBar(context: context, alert: "Please select six numbers");
+                         return;
+                       }
 
 
-                        setState(() {
-                          loading = true;
-                        });
 
 
-                         Map<String,dynamic> body = {
-                           'user_name':name.text.trimRight(),
-                           'user_phone':phoneNumber.text.trimRight(),
-                           'ticket_no':ticketModel?.ticketNo.toString(),
-                           'amount': ticketModel?.amount,
-                           'number':numbers.value,
-                         };
-                        PlayLotteryModel? playLotteryModel = await  Provider.of<LotteryProvider>(context, listen: false).callSellerdrawEntryAPI(context,body);
+                       setState(() {
+                         loading = true;
+                       });
 
 
-                        print("play lottery mod : ${playLotteryModel?.toJson()}");
-
-                        if(playLotteryModel != null){
-                            playLotteryResponses.add(playLotteryModel);
-
-                            if(index+1 <= widget.createSellerTicket.data!.length-1){
-                                print("if true");
-                                index = index +1;
-                                ticketModel = widget.createSellerTicket.data![index];
-                                tickerNumber.text = ticketModel!.ticketNo.toString();
-                            }
-                            else{
-                              print("else true");
-
-                              HelperFunctions.showAlert(
-                                context: context,
-                                header: "SuperBoul",
-                                widget: Text("All tickets are finished , do you like to view and print the details?"),
-                                onDone: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (ctx)=>PrintDetails(
-                                    playLotteryResponses: playLotteryResponses,
-                                  )));
-                                },
-                                onCancel: () {
-                                  Navigator.pop(context);
-                                },
-                                btnDoneText: "Yes",
-                              );
+                       Map<String,dynamic> body = {
+                         'user_name':name.text.trimRight(),
+                         'user_phone':phoneNumber.text.trimRight(),
+                         'ticket_no':ticketModel?.ticketNo.toString(),
+                         'amount': ticketModel?.amount,
+                         'number':numbers.value,
+                       };
+                       PlayLotteryModel? playLotteryModel = await  Provider.of<LotteryProvider>(context, listen: false).callSellerdrawEntryAPI(context,body);
 
 
-                            }
-                        }
+                       print("play lottery mod : ${playLotteryModel?.toJson()}");
 
-                        print("tick no: ${ticketModel?.ticketNo}");
+                       if(playLotteryModel != null){
+                         playLotteryResponses.add(playLotteryModel);
 
-                        setState(() {
-                       numbers.value = [];
-                       loading = false;
-                     });
+                         if(index+1 <= widget.createSellerTicket.data!.length-1){
+                           print("if true");
+                           index = index +1;
+                           ticketModel = widget.createSellerTicket.data![index];
+                           tickerNumber.text = ticketModel!.ticketNo.toString();
+                         }
+                         else{
+                           print("else true");
+
+                           HelperFunctions.showAlert(
+                             context: context,
+                             header: "SuperBoul",
+                             widget: Text("All tickets are finished , do you like to view and print the details?"),
+                             onDone: () {
+                               Navigator.push(context, MaterialPageRoute(builder: (ctx)=>PrintDetails(
+                                 playLotteryResponses: playLotteryResponses,
+                                 userName: name.text.trimRight(),
+                               )));
+                             },
+                             onCancel: () {
+                               Navigator.pop(context);
+                             },
+                             btnCancelText: "No",
+                             btnDoneText: "Yes",
+                           );
 
 
-                   })
+                         }
+                       }
+
+                       print("tick no: ${ticketModel?.ticketNo}");
+
+                       setState(() {
+                         numbers.value = [];
+                         loading = false;
+                       });
+
+
+                     })
+
+                   ]
+
 
                  ],
                ),

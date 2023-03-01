@@ -4,15 +4,18 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
+import 'package:superlotto/Screens/seller_screens/seller_dashboard.dart';
 import 'package:superlotto/helpers/helperFunctions.dart';
 
 import '../../models/PlayLotteryModel.dart';
 
 class PrintDetails extends StatefulWidget {
 
+  String userName;
+
   List<PlayLotteryModel> playLotteryResponses = [];
 
-  PrintDetails({Key? key,required this.playLotteryResponses}) : super(key: key);
+  PrintDetails({Key? key,required this.playLotteryResponses,required this.userName}) : super(key: key);
 
   @override
   State<PrintDetails> createState() => _PrintDetailsState();
@@ -20,7 +23,8 @@ class PrintDetails extends StatefulWidget {
 
 class _PrintDetailsState extends State<PrintDetails> {
 
-  String? name;
+  //String? name;
+  String? token;
 
   @override
   void initState() {
@@ -28,7 +32,7 @@ class _PrintDetailsState extends State<PrintDetails> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async{
       String? fname =await HelperFunctions.getFromPreference("fname");
       String? lname = await HelperFunctions.getFromPreference("lname");
-      name = "$fname $lname";
+      token = await HelperFunctions.getFromPreference("token");
       _printTickets();
     });
     super.initState();
@@ -37,13 +41,18 @@ class _PrintDetailsState extends State<PrintDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return WillPopScope(
+        onWillPop: () async{
+           Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx)=>SellerDashboard(token: token??"")));
+          return Future.value(false);
+        },
+        child: Container());
   }
 
   void _printTickets() async{
     final doc = pw.Document();
     doc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: PdfPageFormat.standard,
         build: (pw.Context context) {
           return pw.ListView(
               children: widget.playLotteryResponses.map((e) => pw.Column(
@@ -60,7 +69,7 @@ class _PrintDetailsState extends State<PrintDetails> {
                          ),
 
                          pw.Text(
-                             "${name}",
+                             "${widget.userName}",
                              style: pw.TextStyle(
                                  fontSize: 13
                              )
