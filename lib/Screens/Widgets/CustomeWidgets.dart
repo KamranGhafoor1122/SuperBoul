@@ -10,15 +10,17 @@ class CustomeText extends StatelessWidget {
   String title;
   Color textcolor;
   double fontsize;
+  TextAlign? textAlign;
   FontWeight fontWeight;
 
 
-  CustomeText(this.fontWeight, this.fontsize, this.title, this.textcolor, {Key? key}) : super(key: key);
+  CustomeText(this.fontWeight, this.fontsize, this.title ,this.textcolor, {Key? key,this.textAlign}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       title,
+      textAlign: textAlign,
       style: TextStyle(color: textcolor, fontSize: fontsize, fontWeight: fontWeight),
     );
   }

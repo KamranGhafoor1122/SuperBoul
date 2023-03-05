@@ -7,6 +7,7 @@ import 'package:superlotto/providers/historyProvider.dart';
 import 'package:superlotto/providers/lottteryProvider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 import 'package:superlotto/providers/sellerTicketsProvider.dart';
+import 'package:superlotto/providers/sellerTransationsProvider.dart';
 import 'package:superlotto/providers/winnerProvider.dart';
 
 import 'Screens/LoginScreen.dart';
@@ -42,6 +43,11 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider(
             create: (context) => SellerTicketsProvider(),
+            child: const AppSplashScreen(),
+          ),
+
+          ChangeNotifierProvider(
+            create: (context) => SellerTransactionsProvider(),
             child: const AppSplashScreen(),
           ),
         ],

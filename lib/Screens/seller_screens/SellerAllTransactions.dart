@@ -5,51 +5,52 @@ import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/Widgets/customLoader.dart';
 import 'package:superlotto/Screens/Widgets/ticketInfoWidget.dart';
 import 'package:superlotto/Screens/seller_screens/ShowTicketDetails.dart';
+import 'package:superlotto/models/TransactionsModel.dart';
 import 'package:superlotto/models/ViewSellerTickets.dart';
 import 'package:superlotto/providers/sellerTicketsProvider.dart';
+import 'package:superlotto/providers/sellerTransationsProvider.dart';
 
 
-class SellerAllTickets extends StatefulWidget {
+class SellerAllTransactions extends StatefulWidget {
   bool? showDetails;
-  SellerAllTickets({Key? key,this.showDetails=false}) : super(key: key);
+  SellerAllTransactions({Key? key,this.showDetails=false}) : super(key: key);
 
   @override
-  State<SellerAllTickets> createState() => _SellerAllTicketsState();
+  State<SellerAllTransactions> createState() => _SellerAllTransactionsState();
 }
 
-class _SellerAllTicketsState extends State<SellerAllTickets> {
+class _SellerAllTransactionsState extends State<SellerAllTransactions> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<SellerTicketsProvider>(context, listen: false).callGetTicketsAPI(context);
+      Provider.of<SellerTransactionsProvider>(context, listen: false).callGetTransactionsAPI(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Consumer<SellerTicketsProvider>(builder: (context, sellerTicketsProvider, child) {
+    return Consumer<SellerTransactionsProvider>(builder: (context, sellerTransactionsProvider, child) {
       return CustomLoader(
-          isLoading: sellerTicketsProvider.fetching,
+          isLoading: sellerTransactionsProvider.fetching,
           child: Scaffold(
             appBar: AppBar(
               centerTitle: true,
               backgroundColor: AppColor.redcolor,
               title: Text(
-                "All Tickets",
+                "All Transactions",
                 style: TextStyle(color: Colors.white, fontSize: size.width * 0.037),
               ),
             ),
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.025, vertical: 10),
               child: ListView.builder(
-                  itemCount: sellerTicketsProvider.viewSellerTickets == null || sellerTicketsProvider.viewSellerTickets!.data == null
-                  || sellerTicketsProvider.viewSellerTickets!.data!.isEmpty
+                  itemCount: sellerTransactionsProvider.transactionsModel == null || sellerTransactionsProvider.transactionsModel!.transactionsList == null
                       ? 0
-                      : sellerTicketsProvider.viewSellerTickets!.data!.length,
+                      : sellerTransactionsProvider.transactionsModel!.transactionsList!.length,
                   itemBuilder: (context, index) {
-                    Data entry = sellerTicketsProvider.viewSellerTickets!.data![index];
+                    SingleTransaction entry = sellerTransactionsProvider.transactionsModel!.transactionsList![index];
                     return Container(
                       padding: EdgeInsets.all(15),
                       margin: EdgeInsets.symmetric(vertical: 5),
@@ -83,11 +84,10 @@ class _SellerAllTicketsState extends State<SellerAllTickets> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                          sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "LOTTERY NAME",
-                            info: entry.lotteryName,
+
+                               TicketInfoWidget(
+                            title: "Transaction Id",
+                            info: entry.transactionId,
                           ),
                           // SizedBox(
                           //   height: size.height * 0.007,
@@ -101,67 +101,24 @@ class _SellerAllTicketsState extends State<SellerAllTickets> {
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                           sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "User name",
-                            info: entry.userName,
+
+                            TicketInfoWidget(
+                            title: "Amount",
+                            info: entry.amount?.toString()??"",
                             color: Colors.red,
                           ),
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                           sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "User phone",
-                            info: entry.userPhone,
+
+                            TicketInfoWidget(
+                            title: "Type",
+                            info: entry.type,
                           ),
                           SizedBox(
                             height: size.height * 0.007,
                           ),
-                           sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "Amount",
-                            info:entry.amount,
-                          ),
 
-                          SizedBox(
-                            height: size.height * 0.007,
-                          ),
-                          sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "Ticket Name",
-                            info:entry.ticketName,
-                          ),
-
-                          SizedBox(
-                            height: size.height * 0.007,
-                          ),
-                          sellerTicketsProvider.viewSellerTickets == null
-                              ? Container()
-                              : TicketInfoWidget(
-                            title: "Ticket No.",
-                            info:entry.ticketNo,
-                          ),
-
-                          if(widget.showDetails??false)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                               TextButton(onPressed: (){
-
-                                 Navigator.push(context, MaterialPageRoute(builder: (ctx)=>ShowTicketDetails(ticketData: entry)));
-                               }, child: Text("View/Print Details",
-                               style: TextStyle(
-                                 fontWeight: FontWeight.w600,
-                                 color: AppColor.redcolor
-                               ),
-                               ),)
-                            ],
-                          )
                         ],
                       ),
                     );

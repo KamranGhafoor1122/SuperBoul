@@ -19,6 +19,10 @@ class ApiConst {
   static const String getTicketsList = 'tickets';
   static const String getWinnings = 'get-winnings';
   static const String getSellerTickets = 'sellerGetAllTickets';
+  static const String getSellerTransactions = 'sellerGetAllTransactions';
+  static const String getSellerEntries = 'sellerGetAllEntries';
+  static const String getSellerPendingBalance = 'sellerGetPendingBalance';
+  static const String getBalanaceA = 'sellerGetAllTickets';
   static const String getSellerWinners = 'sellerGetWinners';
   static const String getEntriesList = 'entries?ticket_id=';
   static const String addcredit = 'credit';

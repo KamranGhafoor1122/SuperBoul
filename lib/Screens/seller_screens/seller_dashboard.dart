@@ -12,9 +12,11 @@ import 'package:superlotto/Screens/Widgets/CustomeWidgets.dart';
 import 'package:superlotto/Screens/Widgets/customLoader.dart';
 import 'package:superlotto/Screens/Widgets/ticketInfoWidget.dart';
 import 'package:superlotto/Screens/seller_screens/SellerAllTickets.dart';
+import 'package:superlotto/Screens/seller_screens/SellerAllTransactions.dart';
 import 'package:superlotto/Screens/seller_screens/SellerPaymentWebView.dart';
 import 'package:superlotto/Screens/seller_screens/Winners.dart';
 import 'package:superlotto/Screens/seller_screens/play_lottery.dart';
+import 'package:superlotto/Screens/seller_screens/show_balance.dart';
 import 'package:superlotto/helpers/helperFunctions.dart';
 import 'package:superlotto/models/CreateSellerTicker.dart';
 import 'package:superlotto/models/LotteryModel.dart';
@@ -404,8 +406,35 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                     Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SellerAllTickets()));
                                   },fontSize: 20,),
 
-                                  /*CustomButton("Print Tickets", onpressed: (){
-                                  },fontSize: 20,)*/
+
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+                                  CustomButton("Show All Transactions", onpressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SellerAllTransactions()));
+                                  },),
+
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+                                  CustomButton("Show Pending Balance", onpressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx)=>ShowBalance()));
+                                  },fontSize: 20,),
+
+
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+
+                                  CustomButton("Print Tickets", onpressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx)=>SellerAllTickets(
+                                      showDetails: true,
+                                    )));
+                                  },fontSize: 20,),
+
 
                                 ],
                               )
