@@ -1,3 +1,5 @@
+import 'package:superlotto/models/language_model.dart';
+
 class ApiConst {
   //static const String BASE_URL = 'https://superlotto.mabhattiltd.com/public/api/';
   static const String BASE_URL = 'https://brasshaiti.net/api/';
@@ -30,4 +32,10 @@ class ApiConst {
   static const String checkPaymentOrderStatus = 'checkOrderIdStatus';
   static const String getWalletPoints = 'getWalletPoints';
   static const String getUser = 'user/profile';
+
+
+  static List<LanguageModel> languages = [
+    LanguageModel(imageUrl: "assets/Images/united_kindom.png", languageName: 'English', countryCode: 'US', languageCode: 'en'),
+    LanguageModel(imageUrl: "assets/Images/haiti.png", languageName: 'Urdu', countryCode: 'PK', languageCode: 'ur'),
+  ];
 }
