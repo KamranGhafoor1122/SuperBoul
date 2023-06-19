@@ -6,10 +6,15 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:provider/provider.dart';
+import 'package:superlotto/Constant/ApiConstant.dart';
 import 'package:superlotto/Constant/Color.dart';
 import 'package:superlotto/Screens/SingupScreen.dart';
 import 'package:superlotto/Screens/Widgets/customLoader.dart';
 import 'package:superlotto/Screens/loginwithotp.dart';
+import 'package:superlotto/localization/language_constrants.dart';
+import 'package:superlotto/models/language_model.dart';
+import 'package:superlotto/providers/language_provider.dart';
+import 'package:superlotto/providers/localization_provider.dart';
 import 'package:superlotto/providers/onbordingProvider.dart';
 
 import '../helpers/helperFunctions.dart';
@@ -30,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _pin;
 
   String type = "user";
+  LanguageModel? _dropDownValue;
 
   _onPressSignIn(BuildContext context) async {
     if (_phoneController.text.isEmpty) {
@@ -56,6 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    Provider.of<LanguageProvider>(context, listen: false).initializeAllLanguages(context);
+     final languageProvider = Provider.of<LanguageProvider>(context, listen: false);
+
     return Scaffold(
         backgroundColor: AppColor.backgroundcolor,
         body: Consumer<OnboradingProvider>(builder: (context, signupProvider, child) {
@@ -84,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               SizedBox(height: 0.h),
 
                               SizedBox(height: 80.h),
-                              CustomeText(FontWeight.w600, 24.sp, 'Welcome SuperBoul,', AppColor.redcolor),
+                              CustomeText(FontWeight.w600, 24.sp, getTranslated("Welcome SuperBoul,", context), AppColor.redcolor),
                               CustomeText(FontWeight.w400, 14.sp, 'Thank you for remember...', const Color(0xff666666)),
                               SizedBox(height: 30.h),
                               SizedBox(
@@ -262,12 +272,58 @@ class _LoginScreenState extends State<LoginScreen> {
                                       builder: (context) => SingUpScreen(),
                                     ));
                               }),
+
+
+
+
+                          DropdownButton<LanguageModel>(
+                            hint: _dropDownValue == null
+                                ? Text('Choose Language')
+                                : Text(
+                              _dropDownValue?.languageName??"",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            isExpanded: true,
+                            iconSize: 30.0,
+                            style: TextStyle(color: Colors.black),
+                            items: languageProvider.languages.map(
+                                  (language) {
+                                return DropdownMenuItem<LanguageModel>(
+                                  value: language,
+                                  child: Text(language.languageName),
+                                );
+                              },
+                            ).toList(),
+                            onChanged: (LanguageModel? language) {
+                              setState(
+                                    () {
+                                  _dropDownValue = language;
+
+                                  if(language?.languageName == "English"){
+                                    Provider.of<LocalizationProvider>(context, listen: false).setLanguage(Locale(
+                                      ApiConst.languages[0].languageCode,
+                                      ApiConst.languages[0].countryCode,
+                                    ));
+                                  }
+                                  else{
+                                    Provider.of<LocalizationProvider>(context, listen: false).setLanguage(Locale(
+                                      ApiConst.languages[1].languageCode,
+                                      ApiConst.languages[1].countryCode,
+                                    ));
+                                  }
+                                },
+                              );
+                            },
+                          )
+
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
+
+
                   Positioned(
                       top: 1.h,
                       left: 50.w,
