@@ -20,32 +20,39 @@ import 'Screens/SplashScreen.dart';
 import 'Screens/Weather.dart';
 
 void main() {
-  runApp(MaterialApp(
-    theme: ThemeData(
-      primaryColor: AppColor.redcolor.withOpacity(0.5),
-      accentColor: Colors.orangeAccent,
-      fontFamily: "Sk-Modernist-Regular",
-      pageTransitionsTheme: PageTransitionsTheme(
-        builders: Map<TargetPlatform, PageTransitionsBuilder>.fromIterable(
-          TargetPlatform.values,
-          value: (dynamic _) => const ZoomPageTransitionsBuilder(),
+  
+  runApp( MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => OnboradingProvider(),
         ),
-      ), textSelectionTheme: TextSelectionThemeData(cursorColor: AppColor.redcolor),
-    ),
-    //locale: Provider.of<LocalizationProvider>(context).locale,
-    localizationsDelegates: [
-      AppLocalization.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: [
-      const Locale('en', 'US'),
-      const Locale('ht', 'CR'),
-    ],
-    debugShowCheckedModeBanner: false,
-    home: AppSplashScreen(),
-  ),);
+        ChangeNotifierProvider(
+          create: (context) => LotteryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => HistoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WinnerProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SellerTicketsProvider(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (context) => SellerTransactionsProvider(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (context) => LocalizationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => LanguageProvider(languageRepo: LanguageRepo()),
+        ),
+      ],
+      child: MyApp()
+
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -59,47 +66,33 @@ class MyApp extends StatelessWidget {
       _locals.add(Locale(language.languageCode, language.countryCode));
     });
 
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => OnboradingProvider(),
-            child: const AppSplashScreen(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => LotteryProvider(),
-            child: const AppSplashScreen(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => HistoryProvider(),
-            child: const AppSplashScreen(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => WinnerProvider(),
-            child: const AppSplashScreen(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => SellerTicketsProvider(),
-            child: const AppSplashScreen(),
-          ),
 
-          ChangeNotifierProvider(
-            create: (context) => SellerTransactionsProvider(),
-            child: const AppSplashScreen(),
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: AppColor.redcolor.withOpacity(0.5),
+        accentColor: Colors.orangeAccent,
+        fontFamily: "Sk-Modernist-Regular",
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: Map<TargetPlatform, PageTransitionsBuilder>.fromIterable(
+            TargetPlatform.values,
+            value: (dynamic _) => const ZoomPageTransitionsBuilder(),
           ),
+        ), textSelectionTheme: TextSelectionThemeData(cursorColor: AppColor.redcolor),
+      ),
+      locale: Provider.of<LocalizationProvider>(context).locale,
+      localizationsDelegates: [
+        AppLocalization.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: _locals,
+      debugShowCheckedModeBanner: false,
+      home: AppSplashScreen()
+    );
 
-          ChangeNotifierProvider(
-            create: (context) => LocalizationProvider(),
-            child: const AppSplashScreen(),
-          ),
-          ChangeNotifierProvider(
-            create: (context) => LanguageProvider(languageRepo: LanguageRepo()),
-            child: const AppSplashScreen(),
-          ),
-        ],
-        child: ScreenUtilInit(
-          designSize: const Size(375, 770),
-          builder: (BuildContext context, Widget? child) => AppSplashScreen()
-        ));
+
+
 
 
   }

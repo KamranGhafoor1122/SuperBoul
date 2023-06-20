@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:superlotto/Screens/HomeScreen.dart';
 
 import 'package:superlotto/Screens/LoginScreen.dart';
@@ -121,6 +122,7 @@ class _AppSplashScreenState extends State<AppSplashScreen> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(360, 690));
     double _h = MediaQuery.of(context).size.height;
     double _w = MediaQuery.of(context).size.width;
     return Scaffold(
